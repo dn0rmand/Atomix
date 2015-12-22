@@ -111,7 +111,7 @@ namespace Atomix
 
 					if ((value & (byte)Field.Atom) == (byte)Field.Atom)
 					{
-						solution[x,y] = (byte)(value & (byte)Field.Index);
+						solution[x,y] = value;
 
 						minX = Math.Min(x, minX); 
 						minY = Math.Min(y, minY); 
@@ -140,7 +140,7 @@ namespace Atomix
 
 					if ((value & (byte)Field.Type) == (byte)Field.Wall)
 					{
-						var texture = Atlases.GetWall(value & (byte)Field.Index);
+						var texture = Atlases.GetWall(value);
 						var wall = SKSpriteNode.FromTexture(texture);
 						wall.ZPosition = Constants.WallZIndex;
 						wall.UserInteractionEnabled = false;
@@ -154,7 +154,7 @@ namespace Atomix
 						free.UserInteractionEnabled = false;
 
 
-						var texture = Atlases.GetAtom(value & (byte)Field.Index);
+						var texture = Atlases.GetAtom(value);
 						var atom	= SKSpriteNode.FromTexture(texture);
 						atom.ZPosition = Constants.AtomZIndex;
 						atom.UserInteractionEnabled = true;
@@ -191,6 +191,9 @@ namespace Atomix
 			field.LevelName 	= dataReader.String;
 			field.LevelDescription 	= dataReader.String;
 
+//			if (! string.IsNullOrWhiteSpace(field.LevelDescription))
+//				Console.WriteLine(field.LevelDescription);
+				 
 			field.CursorType	= dataReader.Byte;
 			field.Background 	= dataReader.Byte;
 

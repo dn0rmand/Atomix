@@ -8,17 +8,19 @@ namespace Atomix
 	{
 		static SKTextureAtlas 	_wallsAtlas = null;
 		static SKTextureAtlas 	_atomsAtlas = null;
+		static SKTextureAtlas 	_smallAtomsAtlas = null;
 		static SKTextureAtlas 	_backgroundsAtlas = null;
-		static SKTextureAtlas 	_font1Atlas = null;
+		static SKTextureAtlas[] _fontsAtlas = new SKTextureAtlas[3];
 
-		public static SKTextureAtlas Font1
+		public static SKTextureAtlas GetFont(int index)
 		{
-			get
-			{
-				if (_font1Atlas == null)
-					_font1Atlas = SKTextureAtlas.FromName("Font1");
-				return _font1Atlas;
-			}
+			if (index < 1 || index > 3)
+				throw new ArgumentException("index");
+
+			if (_fontsAtlas[index] == null)
+				_fontsAtlas[index] = SKTextureAtlas.FromName("Font"+index);
+
+			return _fontsAtlas[index];
 		}
 
 		public static SKTextureAtlas Walls
@@ -28,6 +30,16 @@ namespace Atomix
 				if (_wallsAtlas == null)
 					_wallsAtlas = SKTextureAtlas.FromName("Walls");
 				return _wallsAtlas;
+			}
+		}
+
+		public static SKTextureAtlas SmallAtoms
+		{
+			get
+			{
+				if (_smallAtomsAtlas == null)
+					_smallAtomsAtlas = SKTextureAtlas.FromName("SmallAtoms");	
+				return _smallAtomsAtlas;
 			}
 		}
 
@@ -53,7 +65,17 @@ namespace Atomix
 
 		public static SKTexture GetWall(int index)
 		{
-			return Walls.TextureNamed("f" + index);
+			return Walls.TextureNamed("f" + (index & (byte)Field.Index));
+		}
+
+		public static SKTexture GetAtom(int index)
+		{
+			return Atoms.TextureNamed("f" + (index & (byte)Field.Index));
+		}
+
+		public static SKTexture GetSmallAtom(int index)
+		{
+			return SmallAtoms.TextureNamed("f" + (index & (byte)Field.Index));
 		}
 
 		public static SKTexture GetFreeTile()
@@ -61,41 +83,63 @@ namespace Atomix
 			return Walls.TextureNamed("empty");
 		}
 
-		public static SKTexture GetAtom(int index)
-		{
-			return Atoms.TextureNamed("f" + index);
-		}
-
 		public static SKTexture GetBackground(int level)
 		{
 			return Backgrounds.TextureNamed("f" + (level % 3));
 		}
 
-		public static int Width1(this string text)
-		{
-			SKTextureAtlas 	font = Font1;
-			var letter = font.TextureNamed("A");
-			return (int)(text.Length * letter.Size.Width);
-		}
+		// Text Writer
 
-		public static void Write1(this SKNode destin, nfloat x, nfloat y, string text)
+		public static int GetWidth(this string text, int fontIndex = 1)
 		{
-			SKTextureAtlas 	font = Font1;
+			var space = (fontIndex == 1 ? 1 : 0);
+			var font  = GetFont(fontIndex);
+
+			var width = 0;
+
 			foreach(char c in text.ToUpperInvariant())
 			{
-				SKSpriteNode letter ;
+				SKTexture		texture = null;
 
 				if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
-					letter = SKSpriteNode.FromTexture(font.TextureNamed(new string(c, 1)));
-				else
-					letter = SKSpriteNode.FromTexture(font.TextureNamed("Other"));
+					texture = font.TextureNamed(new string(c, 1));
+				else if (c == ':')
+					texture = font.TextureNamed("Colon");
+
+				if (texture == null) // Letter not found!
+					texture = font.TextureNamed("Other");
+
+				width += (int) (texture.Size.Width + space);
+			}
+
+			return width;
+		}
+
+		public static void Write(this SKNode destin, nfloat x, nfloat y, string text, int fontIndex = 1)
+		{
+			var space = (fontIndex == 1 ? 1 : 0);
+
+			SKTextureAtlas 	font = GetFont(fontIndex);
+			foreach(char c in text.ToUpperInvariant())
+			{
+				SKTexture		texture = null;
+
+				if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
+					texture = font.TextureNamed(new string(c, 1));
+				else if (c == ':')
+					texture = font.TextureNamed("Colon");
+
+				if (texture == null) // Letter not found!
+					texture = font.TextureNamed("Other");
+
+				var letter = SKSpriteNode.FromTexture(texture);
 
 				letter.AnchorPoint = CGPoint.Empty;
 				letter.Position    = new CGPoint(x, y);
 				letter.ZPosition   = destin.ZPosition+1;
 
 				destin.Add(letter);
-				x += (int) (letter.Size.Width);
+				x += (int) (texture.Size.Width + space);
 			}
 		}
 	}

@@ -29,6 +29,9 @@ namespace Atomix
 
 		public const int 	TileWidth 	= 16;
 		public const int 	TileHeight	= 16;
+
+		public const int	SmallAtomWidth = 8;
+		public const int	SmallAtomHeight= 8;
 	}
 }
 

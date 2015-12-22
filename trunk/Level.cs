@@ -13,7 +13,6 @@ namespace Atomix
 		int 			_maxX , _maxY;
 		byte[,]			_solution;
 		SKSpriteNode	_background;
-		SKSpriteNode	_preview;
 
 		#endregion
 
@@ -111,22 +110,6 @@ namespace Atomix
 			scene.Add(_background);
 			scene.Add(_preview);
 			scene.Add(this);
-		}
-
-		SKSpriteNode GetPreview()
-		{
-			var preview = SKSpriteNode.FromImageNamed("Preview");
-
-			preview.AnchorPoint = CGPoint.Empty;
-			preview.Position	= CGPoint.Empty;
-			preview.ZPosition	= Constants.PreviewZIndex;
-
-			var y = preview.Size.Height - 18;
-			var x = (preview.Size.Width - this.LevelName.Width1())/2;
-
-			preview.Write1(x, y, this.LevelName);
-
-			return preview;
 		}
 
 		SKSpriteNode GetBackground()

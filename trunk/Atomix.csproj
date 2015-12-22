@@ -122,6 +122,9 @@
     <Compile Include="Level+Data.cs">
       <DependentUpon>Level.cs</DependentUpon>
     </Compile>
+    <Compile Include="Level+Preview.cs">
+      <DependentUpon>Level.cs</DependentUpon>
+    </Compile>
     <Compile Include="Level+Loader.cs">
       <DependentUpon>Level.cs</DependentUpon>
     </Compile>
