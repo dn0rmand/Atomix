@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProjectTypeGuids>{FEACFBD2-3405-455C-9665-78FE426C6842};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{9BB9E4D1-7E4C-49AB-954D-F76781ED8F49}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Atomix</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Atomix</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>i386</MtouchArch>
+    <MtouchLink>None</MtouchLink>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchFastDev>true</MtouchFastDev>
+    <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchProfiling>true</MtouchProfiling>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchFloat32>true</MtouchFloat32>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>i386</MtouchArch>
+    <MtouchLink>None</MtouchLink>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <MtouchUseSGen>true</MtouchUseSGen>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;ENABLE_TEST_CLOUD;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <MtouchArch>ARMv7, ARM64</MtouchArch>
+    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchFloat32>true</MtouchFloat32>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <DeviceSpecificBuild>true</DeviceSpecificBuild>
+    <MtouchDebug>true</MtouchDebug>
+    <MtouchUseSGen>true</MtouchUseSGen>
+    <MtouchUseRefCounting>true</MtouchUseRefCounting>
+    <MtouchProfiling>true</MtouchProfiling>
+    <BuildIpa>true</BuildIpa>
+    <IpaPackageName>
+    </IpaPackageName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="Xamarin.iOS" />
+  </ItemGroup>
+  <ItemGroup>
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Logo.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Logo.imageset\title.png" />
+    <ImageAsset Include="Resources\Images.xcassets\InfoScreen.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\InfoScreen.imageset\infoscreen.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Intro-1.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Intro-2.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Intro-3.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Intro-1.imageset\intro1.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Intro-2.imageset\intro2.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Intro-3.imageset\intro3.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Level-Start.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Level-Selection.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Level-Selection.imageset\levsel2.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Level-Start.imageset\levsel.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Preview.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Preview.imageset\preview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
+    <InterfaceDefinition Include="Main.storyboard" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+    <None Include="Entitlements.plist" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="AppDelegate.cs" />
+    <Compile Include="GameViewController.cs" />
+    <Compile Include="GameViewController.designer.cs">
+      <DependentUpon>GameViewController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GameScene.cs" />
+    <Compile Include="Level.cs" />
+    <Compile Include="Level+Data.cs">
+      <DependentUpon>Level.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Level+Loader.cs">
+      <DependentUpon>Level.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Atlases.cs" />
+    <Compile Include="IntroScene.cs" />
+    <Compile Include="Constants.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Resources\Images.xcassets\Logo.imageset\" />
+    <Folder Include="Resources\Images.xcassets\InfoScreen.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Intro-1.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Intro-2.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Intro-3.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Level-Start.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Level-Selection.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Preview.imageset\" />
+  </ItemGroup>
+  <ItemGroup>
+    <AtlasTexture Include="Resources\Walls.atlas\f0.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f1.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f10.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f11.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f12.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f13.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f14.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f15.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f16.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f17.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f18.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f2.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f3.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f4.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f5.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f6.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f7.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f8.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\f9.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f0.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f1.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f10.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f11.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f12.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f13.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f14.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f15.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f16.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f17.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f18.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f19.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f2.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f20.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f21.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f22.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f23.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f24.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f25.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f26.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f27.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f28.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f29.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f3.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f30.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f31.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f32.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f33.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f34.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f35.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f36.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f37.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f38.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f39.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f4.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f40.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f41.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f42.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f43.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f44.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f45.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f46.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f47.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f48.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f5.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f6.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f7.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f8.png" />
+    <AtlasTexture Include="Resources\Atoms.atlas\f9.png" />
+    <AtlasTexture Include="Resources\Backgrounds.atlas\f0.png" />
+    <AtlasTexture Include="Resources\Backgrounds.atlas\f1.png" />
+    <AtlasTexture Include="Resources\Backgrounds.atlas\f2.png" />
+    <AtlasTexture Include="Resources\Walls.atlas\empty.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\0.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\1.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\2.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\3.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\4.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\5.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\6.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\7.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\8.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\9.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\A.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\B.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\C.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\D.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\E.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\F.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\G.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\H.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\I.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\J.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\K.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\L.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\M.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\N.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\O.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\Other.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\P.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\Q.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\R.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\S.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\T.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\U.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\V.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\W.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\X.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\Y.png" />
+    <AtlasTexture Include="Resources\Font1.atlas\Z.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f0.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f1.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f2.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f3.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f4.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f5.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f6.png" />
+    <AtlasTexture Include="Resources\Explosion.atlas\f7.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\0.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\1.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\2.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\3.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\4.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\5.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\6.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\7.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\8.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\9.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\Colon.png" />
+    <AtlasTexture Include="Resources\Font2.atlas\Other.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\A.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\B.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\C.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\D.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\E.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\F.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\G.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\H.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\I.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\J.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\K.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\L.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\M.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\N.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\O.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\Other.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\P.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\Q.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\R.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\S.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\T.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\U.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\V.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\W.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\X.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\Y.png" />
+    <AtlasTexture Include="Resources\Font3.atlas\Z.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f0.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f1.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f10.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f11.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f12.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f13.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f14.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f15.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f16.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f17.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f18.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f19.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f2.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f20.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f21.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f22.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f23.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f24.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f25.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f26.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f27.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f28.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f29.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f3.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f30.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f31.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f32.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f33.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f34.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f35.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f36.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f37.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f38.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f39.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f4.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f40.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f41.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f42.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f43.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f44.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f45.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f46.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f47.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f48.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f5.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f6.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f7.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f8.png" />
+    <AtlasTexture Include="Resources\SmallAtoms.atlas\f9.png" />
+  </ItemGroup>
+</Project>
