@@ -34,5 +34,27 @@ namespace Atomix
 		public const int	SmallAtomWidth = 8;
 		public const int	SmallAtomHeight= 8;
 	}
+
+	static class Extension
+	{
+		public static void Destroy(this SKNode node)
+		{
+			if (node != null)
+			{
+				node.RemoveFromParent();
+				node.Dispose();
+			}
+		}
+
+		public static void Destroy(this UIGestureRecognizer gesture, UIView parentView)
+		{
+			if (gesture != null)				
+			{
+				parentView.RemoveGestureRecognizer(gesture);
+				gesture.Delegate = null;
+				gesture.Dispose();
+			}
+		}
+	}
 }
 

@@ -11,6 +11,31 @@ namespace Atomix
 	public class IntroScene : SKScene
 	{
 		const	int 	_slidingWidth = 200;
+		const	int		_buttonStartY = 80;
+
+		class GestureRecognizerFilter : UIGestureRecognizerDelegate
+		{
+			WeakReference<SKScene>	_parent;
+
+			public GestureRecognizerFilter(SKScene parent)
+			{
+				_parent = new WeakReference<SKScene>(parent);
+			}
+
+			public override bool ShouldReceiveTouch(UIGestureRecognizer recognizer, UITouch touch)
+			{
+				SKScene parent;
+
+				if (_parent.TryGetTarget(out parent))
+				{
+					CGPoint touchPoint = touch.LocationInNode(parent);
+
+					return (touchPoint.Y > _buttonStartY && touchPoint.Y < parent.Size.Height-_buttonStartY);
+				}
+				else
+					return false;
+			}
+		}
 
 		SKSpriteNode 				_intro;
 		int						 	_index;
@@ -21,9 +46,10 @@ namespace Atomix
 		bool						_showingMenu = false;
 		bool						_switchingPreview = false;
 		bool						_didTouch = false;
-		UISwipeGestureRecognizer	_swipeLeftGesture;
-		UISwipeGestureRecognizer	_swipeRightGesture;
-		UITapGestureRecognizer		_tapGesture;
+		UISwipeGestureRecognizer	_swipeLeftGesture = null;
+		UISwipeGestureRecognizer	_swipeRightGesture = null;
+		UITapGestureRecognizer		_tapGesture = null;
+		GestureRecognizerFilter		_gestureFilter = null;
 
 		public IntroScene() : base(new CGSize(320, 240))
 		{
@@ -34,25 +60,6 @@ namespace Atomix
 
 		public IntroScene (IntPtr handle) : base (handle)
 		{
-		}
-
-		void DisposeIntro()
-		{
-			if (_intro != null)
-			{
-				_intro.RemoveFromParent();
-				_intro.Dispose();
-				_intro = null;
-			}
-		}
-
-		void DisposePreview(SKNode preview)
-		{
-			if (preview != null)
-			{
-				preview.RemoveFromParent();
-				preview.Dispose();
-			}
 		}
 
 		SKSpriteNode CreateImage(string name)
@@ -92,18 +99,18 @@ namespace Atomix
 			var newPreview = CreatePreview(_level);
 
 			newPreview.AnchorPoint = CGPoint.Empty;
-			newPreview.Position    = new CGPoint(-(direction * _slidingWidth), 0);
+			newPreview.Position    = new CGPoint(direction * _slidingWidth, 0);
 
 			this.Add(newPreview);
 
-			SKAction moveRight = SKAction.MoveBy(direction * _slidingWidth, 0, 2);
+			SKAction moveRight = SKAction.MoveBy(-(direction * _slidingWidth), 0, 2);
 
 			_switchingPreview = true;
 
 			if (curPreview != null)
 			{
 				curPreview.RunAction(moveRight, () => {
-					DisposePreview(curPreview);
+					curPreview.Destroy();
 				});
 			}
 
@@ -127,11 +134,63 @@ namespace Atomix
 			SwitchPreview(-1);
 		}
 
+		void CreateMenu()
+		{
+			CreateImage("Level-Menu");
+
+			var button = SKButton.Create("StartButtonNormal", "StartButtonSelected");
+			button.Clicked += StartGame;
+
+			var x = (this.Size.Width - button.Size.Width)/2;
+			button.Position = new CGPoint(x, _buttonStartY);
+			button.AnchorPoint = new CGPoint(0, 1);
+			button.ZPosition = Constants.FrameZIndex+100;
+
+			this.Add(button);
+
+			_level   = 1;
+
+			_preview = CreatePreview(_level);
+			_preview.AnchorPoint = CGPoint.Empty;
+			_preview.Position    = CGPoint.Empty;
+			this.Add(_preview);
+
+			// Create Gestures
+
+			_gestureFilter = new GestureRecognizerFilter(this);
+
+			_swipeLeftGesture = new UISwipeGestureRecognizer(HandleSwipeLeft);
+			_swipeRightGesture = new UISwipeGestureRecognizer(HandleSwipeRight);
+
+			_swipeLeftGesture.Direction = UISwipeGestureRecognizerDirection.Left;
+			_swipeRightGesture.Direction = UISwipeGestureRecognizerDirection.Right;
+
+			_swipeLeftGesture.Delegate = _gestureFilter;
+			_swipeRightGesture.Delegate = _gestureFilter;
+
+			View.AddGestureRecognizer(_swipeLeftGesture);
+			View.AddGestureRecognizer(_swipeRightGesture);
+
+			_showingMenu = true;
+		}
+
+		void DisposeIntro()
+		{
+			_intro.Destroy();
+			_intro = null;
+
+			if (_index > 3)
+			{
+				_tapGesture.Destroy(View);
+				_tapGesture = null;
+			}
+		}
+
 		void SwitchIntro()
 		{
-			DisposeIntro();
-
 			_index++;
+
+			DisposeIntro();
 
 			if (_index <= 3)
 			{
@@ -139,14 +198,7 @@ namespace Atomix
 			}
 			else
 			{
-				CreateImage("Level-Selection");
-				CreateImage("Level-Start");
-
-				_level   = 1;
-				_preview = CreatePreview(_level);
-				_preview.AnchorPoint = CGPoint.Empty;
-				_preview.Position    = CGPoint.Empty;
-				this.Add(_preview);
+				CreateMenu();
 				_showingMenu = true;
 			}
 		}
@@ -159,53 +211,25 @@ namespace Atomix
 			node.ZPosition = Constants.FrameZIndex;
 			this.Add(node);
 
-			_swipeLeftGesture = new UISwipeGestureRecognizer(HandleSwipeLeft);
-			_swipeLeftGesture.Direction = UISwipeGestureRecognizerDirection.Left;
-			_swipeRightGesture = new UISwipeGestureRecognizer(HandleSwipeRight);
-			_swipeRightGesture.Direction = UISwipeGestureRecognizerDirection.Right;
 			_tapGesture = new UITapGestureRecognizer(HandleTap);
-
 			view.AddGestureRecognizer(_tapGesture);
-			view.AddGestureRecognizer(_swipeLeftGesture);
-			view.AddGestureRecognizer(_swipeRightGesture);
 		}
 
 		public override void WillMoveFromView (SKView view)
 		{
-			if (_swipeLeftGesture != null)
-			{
-				view.RemoveGestureRecognizer(_swipeLeftGesture);
-				_swipeLeftGesture.Dispose();
-				_swipeLeftGesture = null;
-			}
+			_swipeLeftGesture.Destroy(view);
+			_swipeLeftGesture = null;
 
-			if (_swipeRightGesture != null)
-			{
-				view.RemoveGestureRecognizer(_swipeRightGesture);
-				_swipeRightGesture.Dispose();
-				_swipeRightGesture = null;
-			}
+			_swipeRightGesture.Destroy(view);
+			_swipeRightGesture = null;
 
-			if (_tapGesture != null)
-			{
-				view.RemoveGestureRecognizer(_tapGesture);
-				_tapGesture.Dispose();
-				_tapGesture = null;
-			}
+			_tapGesture.Destroy(view);
+			_tapGesture = null;
+
 			base.WillMoveFromView (view);
 		}
 
 		void HandleSwipeLeft(UISwipeGestureRecognizer sender)
-		{
-			Console.WriteLine("Gesture State is " + sender.State.ToString());
-
-			if (sender.State == UIGestureRecognizerState.Ended)
-			{
-				PreviousPreview();
-			}
-		}
-
-		void HandleSwipeRight(UISwipeGestureRecognizer sender)
 		{
 			if (sender.State == UIGestureRecognizerState.Ended)
 			{
@@ -213,10 +237,18 @@ namespace Atomix
 			}
 		}
 
-		void StartGame(int level)
+		void HandleSwipeRight(UISwipeGestureRecognizer sender)
+		{
+			if (sender.State == UIGestureRecognizerState.Ended)
+			{
+				PreviousPreview();
+			}
+		}
+
+		void StartGame(object sender, EventArgs e)
 		{
 			var transition = SKTransition.CrossFadeWithDuration(0.5);
-			var game = new GameScene(level);
+			var game = new GameScene(_level);
 			this.View.PresentScene(game, transition);
 		}
 
@@ -224,25 +256,13 @@ namespace Atomix
 		{
 			if (_showingMenu)
 			{
-				var rect 		  = new CGRect(95, 150, 130, 25);
 				var touchLocation = sender.LocationInView(sender.View);
 
 		        touchLocation = this.ConvertPointFromView(touchLocation);
 		        touchLocation.Y = this.Size.Height - touchLocation.Y;
-
-		        if (rect.Contains(touchLocation))
-		        {
-		        	StartGame(_level);
-			    } 
 			}
-			else
+			else // Anywhere is good enough since we're not showing the menu yet.
 			{
-				var touchLocation = sender.LocationInView(sender.View);
-
-		        touchLocation = this.ConvertPointFromView(touchLocation);
-
-		        Console.WriteLine(touchLocation);
-
 				_didTouch = true;
 			}
 		}

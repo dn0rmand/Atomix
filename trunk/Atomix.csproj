@@ -95,12 +95,14 @@
     <ImageAsset Include="Resources\Images.xcassets\Intro-1.imageset\intro1.png" />
     <ImageAsset Include="Resources\Images.xcassets\Intro-2.imageset\intro2.png" />
     <ImageAsset Include="Resources\Images.xcassets\Intro-3.imageset\intro3.png" />
-    <ImageAsset Include="Resources\Images.xcassets\Level-Start.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\Level-Selection.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\Level-Selection.imageset\levsel2.png" />
-    <ImageAsset Include="Resources\Images.xcassets\Level-Start.imageset\levsel.png" />
     <ImageAsset Include="Resources\Images.xcassets\Preview.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\Preview.imageset\preview.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Level-Menu.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Level-Menu.imageset\levsel2.png" />
+    <ImageAsset Include="Resources\Images.xcassets\StartButtonNormal.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\StartButtonSelected.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\StartButtonNormal.imageset\StartButtonNormal.png" />
+    <ImageAsset Include="Resources\Images.xcassets\StartButtonSelected.imageset\StartButtonSelected.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -131,6 +133,7 @@
     <Compile Include="Atlases.cs" />
     <Compile Include="IntroScene.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="SKButton.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -139,9 +142,10 @@
     <Folder Include="Resources\Images.xcassets\Intro-1.imageset\" />
     <Folder Include="Resources\Images.xcassets\Intro-2.imageset\" />
     <Folder Include="Resources\Images.xcassets\Intro-3.imageset\" />
-    <Folder Include="Resources\Images.xcassets\Level-Start.imageset\" />
-    <Folder Include="Resources\Images.xcassets\Level-Selection.imageset\" />
     <Folder Include="Resources\Images.xcassets\Preview.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Level-Menu.imageset\" />
+    <Folder Include="Resources\Images.xcassets\StartButtonNormal.imageset\" />
+    <Folder Include="Resources\Images.xcassets\StartButtonSelected.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <AtlasTexture Include="Resources\Walls.atlas\f0.png" />

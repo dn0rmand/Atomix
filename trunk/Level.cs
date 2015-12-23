@@ -71,19 +71,11 @@ namespace Atomix
 
 		public void RemoveFromScene(bool dispose = true)
 		{
-			if (_background != null)
-			{
-				_background.RemoveFromParent();
-				_background.Dispose();
-				_background = null;
-			}
+			_background.Destroy();
+			_background = null;
 
-			if (_preview != null)
-			{
-				_preview.RemoveFromParent();
-				_preview.Dispose();
-				_preview = null;
-			}
+			_preview.Destroy();
+			_preview = null;
 
 			this.RemoveFromParent();
 
