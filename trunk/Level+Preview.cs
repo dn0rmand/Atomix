@@ -14,7 +14,7 @@ namespace Atomix
 
 		#endregion
 
-		public void AddSolution(SKSpriteNode parent)
+		public void AddSolution(SKSpriteNode parent, int offset = 8)
 		{
 			var maxX = _solution.GetLength(0);
 			var maxY = _solution.GetLength(1);
@@ -23,7 +23,7 @@ namespace Atomix
 			var height = maxY * Constants.SmallAtomHeight;
 
 			var positionX = (parent.Size.Width - width)/2;
-			var positionY = ((parent.Size.Height + height) / 2) - 8; // - 1 row of text for molecule title.
+			var positionY = ((parent.Size.Height + height) / 2) - offset; // - 1 row of text for molecule title.
 			 
 			for (var y = 0; y < maxY; y++)
 			{

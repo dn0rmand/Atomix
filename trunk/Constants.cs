@@ -23,6 +23,7 @@ namespace Atomix
 		public const float	FreeZIndex 		 = 20;
 		public const float	WallZIndex		 = 30;
 		public const float	AtomZIndex		 = 40;
+		public const float  FrameZIndex		 = 500;
 
 		public const int 	FirstLevel  = 1;
 		public const int 	LastLevel	= 30;
