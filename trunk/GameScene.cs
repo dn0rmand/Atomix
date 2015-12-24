@@ -19,7 +19,7 @@ namespace Atomix
 			_currentLevel = level;
 			_level = null;
 
-			this.ScaleMode = SKSceneScaleMode.AspectFill;
+			this.ScaleMode = SKSceneScaleMode.AspectFit;
 			this.BackgroundColor = UIColor.Black;
 		}
 

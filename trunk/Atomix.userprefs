@@ -1,11 +1,11 @@
 ﻿<Properties StartupItem="Atomix.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPadAir.9.2" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="IntroScene.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="IntroScene.cs" Line="253" Column="1" />
-      <File FileName="SKButton.cs" Line="151" Column="1" />
-      <File FileName="Constants.cs" Line="55" Column="23" />
-      <File FileName="GameScene.cs" Line="55" Column="4" />
+      <File FileName="IntroScene.cs" Line="106" Column="77" />
+      <File FileName="SKButton.cs" Line="1" Column="1" />
+      <File FileName="Constants.cs" Line="1" Column="1" />
+      <File FileName="GameScene.cs" Line="23" Column="22" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -53,7 +53,7 @@ namespace Atomix
 
 		public IntroScene() : base(new CGSize(320, 240))
 		{
-			this.ScaleMode = SKSceneScaleMode.AspectFill;
+			this.ScaleMode = SKSceneScaleMode.AspectFit;
 			this.BackgroundColor = UIColor.FromRGB(0xC3, 0xC3, 0xE3);
 			_index = 0;
 		}
@@ -103,7 +103,7 @@ namespace Atomix
 
 			this.Add(newPreview);
 
-			SKAction moveRight = SKAction.MoveBy(-(direction * _slidingWidth), 0, 2);
+			SKAction moveRight = SKAction.MoveBy(-(direction * _slidingWidth), 0, 0.5);
 
 			_switchingPreview = true;
 
