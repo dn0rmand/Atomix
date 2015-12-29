@@ -112,6 +112,12 @@
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-76x76.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-152x152.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-167x167.png" />
+    <ImageAsset Include="Resources\Images.xcassets\SoundOn.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\SoundOff.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\SoundOff.imageset\Volume-Off.png" />
+    <ImageAsset Include="Resources\Images.xcassets\SoundOn.imageset\Volume-On.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Timeout.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Timeout.imageset\timeout.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -143,6 +149,8 @@
     <Compile Include="IntroScene.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="SKButton.cs" />
+    <Compile Include="SpecialNodes.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -155,6 +163,10 @@
     <Folder Include="Resources\Images.xcassets\Level-Menu.imageset\" />
     <Folder Include="Resources\Images.xcassets\StartButtonNormal.imageset\" />
     <Folder Include="Resources\Images.xcassets\StartButtonSelected.imageset\" />
+    <Folder Include="Resources\Sounds\" />
+    <Folder Include="Resources\Images.xcassets\SoundOn.imageset\" />
+    <Folder Include="Resources\Images.xcassets\SoundOff.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Timeout.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <AtlasTexture Include="Resources\Walls.atlas\f0.png" />
@@ -362,5 +374,12 @@
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f7.png" />
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f8.png" />
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f9.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\Sounds\bzzz.wav" />
+    <BundleResource Include="Resources\Sounds\end.mp3" />
+    <BundleResource Include="Resources\Sounds\explode.wav" />
+    <BundleResource Include="Resources\Sounds\selected.wav" />
+    <BundleResource Include="Resources\Sounds\title.mp3" />
   </ItemGroup>
 </Project>

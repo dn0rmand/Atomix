@@ -40,6 +40,8 @@ namespace Atomix
 			Initialize(texture, null, null);
 		}
 
+		public SKButton(IntPtr handle) : base(handle) { }
+
 		void Initialize(SKTexture normal, SKTexture selected, SKTexture disabled)
 		{
 			NormalTexture 	= normal;

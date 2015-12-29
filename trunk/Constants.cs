@@ -55,6 +55,16 @@ namespace Atomix
 				gesture.Dispose();
 			}
 		}
+
+		public static nfloat DistanceTo(this CGPoint a, CGPoint b)
+		{
+			var xx = b.X - a.X;
+			var yy = b.Y = a.Y;
+
+			var dd = xx*xx + yy*xx;
+
+			return NMath.Sqrt(dd);
+		}
 	}
 }
 

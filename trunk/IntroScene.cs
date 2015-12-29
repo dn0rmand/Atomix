@@ -138,6 +138,15 @@ namespace Atomix
 		{
 			CreateImage("Level-Menu");
 
+			var soundOnOff = SKButton.Create(AppDelegate.SoundEnabled ? "SoundOn" : "SoundOff");
+			soundOnOff.Clicked += SwitchSound;
+
+			soundOnOff.Position = new CGPoint(55, _buttonStartY-5);
+			soundOnOff.AnchorPoint = new CGPoint(0,1);
+			soundOnOff.ZPosition = Constants.FrameZIndex + 100;
+
+			this.Add(soundOnOff);
+
 			var button = SKButton.Create("StartButtonNormal", "StartButtonSelected");
 			button.Clicked += StartGame;
 
@@ -250,6 +259,17 @@ namespace Atomix
 			var transition = SKTransition.CrossFadeWithDuration(0.5);
 			var game = new GameScene(_level);
 			this.View.PresentScene(game, transition);
+		}
+
+		void SwitchSound(object sender, EventArgs e)
+		{
+			var button = sender as SKButton;
+
+			AppDelegate.SoundEnabled = ! AppDelegate.SoundEnabled;
+			if (AppDelegate.SoundEnabled)
+				button.Texture = button.NormalTexture = SKTexture.FromImageNamed("SoundOn");
+			else
+				button.Texture = button.NormalTexture = SKTexture.FromImageNamed("SoundOff");
 		}
 
 		void HandleTap(UITapGestureRecognizer sender)

@@ -1,9 +1,50 @@
 ﻿using System;
 using SpriteKit;
 using CoreGraphics;
+using System.Collections.Generic;
 
 namespace Atomix
 {
+	public class TextNode
+	{
+		List<SKNode>	_letters = new List<SKNode>();
+
+		public TextNode(int font, CGPoint position)
+		{
+			Font 	 = font;
+			Position = position;
+		}
+
+		public void Destroy()
+		{
+			foreach(SKNode letter in _letters)
+			{
+				letter.RemoveFromParent();
+				letter.Dispose();
+			}
+
+			_letters.Clear();
+			GC.SuppressFinalize(this);
+		}
+
+		public int Font 
+		{ 
+			get; 
+			private set; 
+		}
+
+		public CGPoint	Position 
+		{ 
+			get; 
+			private set; 
+		}
+
+		public void AddLetter(SKNode node)
+		{
+			_letters.Add(node);
+		}
+	}
+
 	public static class Atlases
 	{
 		static SKTextureAtlas 	_wallsAtlas = null;
@@ -17,10 +58,10 @@ namespace Atomix
 			if (index < 1 || index > 3)
 				throw new ArgumentException("index");
 
-			if (_fontsAtlas[index] == null)
-				_fontsAtlas[index] = SKTextureAtlas.FromName("Font"+index);
+			if (_fontsAtlas[index-1] == null)
+				_fontsAtlas[index-1] = SKTextureAtlas.FromName("Font"+index);
 
-			return _fontsAtlas[index];
+			return _fontsAtlas[index-1];
 		}
 
 		public static SKTextureAtlas Walls
@@ -115,14 +156,14 @@ namespace Atomix
 			return width;
 		}
 
-		public static void Write(this SKNode destin, nfloat x, nfloat y, string text, int fontIndex = 1)
+		public static TextNode Write(this SKNode destin, nfloat x, nfloat y, string text, int fontIndex = 1)
 		{
-			var space = (fontIndex == 1 ? 1 : 0);
+			var textNode = new TextNode(fontIndex, new CGPoint(x, y));
 
 			SKTextureAtlas 	font = GetFont(fontIndex);
 			foreach(char c in text.ToUpperInvariant())
 			{
-				SKTexture		texture = null;
+				SKTexture texture = null;
 
 				if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
 					texture = font.TextureNamed(new string(c, 1));
@@ -139,8 +180,11 @@ namespace Atomix
 				letter.ZPosition   = destin.ZPosition+1;
 
 				destin.Add(letter);
-				x += (int) (texture.Size.Width + space);
+				textNode.AddLetter(letter);
+				x += (int) (texture.Size.Width + 1);
 			}
+
+			return textNode;
 		}
 	}
 }

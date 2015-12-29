@@ -74,7 +74,7 @@ namespace Atomix
 					var v1 = (int) Byte;
 					var v2 = (int) Byte;
 
-					return v1 >> 8 + v2;
+					return (v1 << 8) + v2;
 				}
 			}
 
@@ -140,34 +140,22 @@ namespace Atomix
 
 					if ((value & (byte)Field.Type) == (byte)Field.Wall)
 					{
-						var texture = Atlases.GetWall(value);
-						var wall = SKSpriteNode.FromTexture(texture);
-						wall.ZPosition = Constants.WallZIndex;
-						wall.UserInteractionEnabled = false;
-
+						var wall = SKWallNode.Create(value);
 						AddNode(wall, x, y);
+						Obstables.Add(wall);
 					}
 					else if ((value & (byte)Field.Type) == (byte)Field.Atom) 
 					{
-						var free = SKSpriteNode.FromTexture(Atlases.GetFreeTile());
-						free.ZPosition = Constants.FreeZIndex;
-						free.UserInteractionEnabled = false;
-
-
-						var texture = Atlases.GetAtom(value);
-						var atom	= SKSpriteNode.FromTexture(texture);
-						atom.ZPosition = Constants.AtomZIndex;
-						atom.UserInteractionEnabled = true;
+						var free = new SKFreeNode();
+						var atom = SKAtomNode.Create(value);
 
 						AddNode(free, x, y);
 						AddNode(atom, x, y);
+						Obstables.Add(atom);
 					}
 					else if ((value & (byte)Field.Type) == (byte)Field.Free)
 					{
-						var free = SKSpriteNode.FromTexture(Atlases.GetFreeTile());
-						free.ZPosition = Constants.FreeZIndex;
-						free.UserInteractionEnabled = false;
-
+						var free = new SKFreeNode();
 						AddNode(free, x, y);
 					}
 				}

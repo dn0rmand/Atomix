@@ -3,6 +3,7 @@ using SpriteKit;
 using System.Collections.Generic;
 using CoreGraphics;
 using UIKit;
+using System.Threading.Tasks;
 
 namespace Atomix
 {
@@ -10,9 +11,10 @@ namespace Atomix
 	{
 		#region Private Fields
 
-		int 			_maxX , _maxY;
-		byte[,]			_solution;
-		SKSpriteNode	_background;
+		int 				_maxX , _maxY;
+		byte[,]				_solution;
+		SKSpriteNode		_background;
+		IList<SKSpriteNode>	_obstables = new List<SKSpriteNode>();
 
 		#endregion
 
@@ -23,7 +25,23 @@ namespace Atomix
 			_maxX = _maxY = 0;
 		}
 
+		public Level(IntPtr handle) : base(handle) { }
+
+		protected override void Dispose (bool disposing)
+		{
+			_obstables.Clear();
+			base.Dispose (disposing);
+		}
+
 		#region Properties
+
+		public IList<SKSpriteNode> Obstables
+		{
+			get
+			{
+				return _obstables;
+			}
+		}
 
 		public string LevelName
 		{
@@ -149,6 +167,95 @@ namespace Atomix
 				var position = node.Position;
 				position.Y = height - position.Y;
 				node.Position = position;
+			}
+		}
+
+		public bool CheckSolution()
+		{
+			int	minX = 16, maxX = 0;
+			int minY = 16, maxY = 0;
+
+			var atoms = new Dictionary<Tuple<int, int>, SKAtomNode>();
+
+			foreach(SKNode node in Obstables)
+			{
+				if (node is SKAtomNode)
+				{
+					var x = (int)(node.Position.X / Constants.TileWidth);
+					var y = (int)(node.Position.Y / Constants.TileWidth);
+
+					atoms.Add(new Tuple<int, int>(x, y), (SKAtomNode)node);
+
+					minX = Math.Min(minX, x);
+					minY = Math.Min(minY, y);
+					maxX = Math.Max(maxX, x);
+					maxY = Math.Max(maxY, y);
+				}
+			}
+
+			var xl = _solution.GetLength(0);
+			var yl = _solution.GetLength(1);
+
+			if ((maxX - minX + 1) != xl)
+				return false;
+			if ((maxY - minY + 1) != yl)
+				return false;
+
+			for(var yy = 0 ; yy < yl ; yy++)
+			{
+				for(var xx = 0 ; xx < xl ; xx++)
+				{
+					var value = _solution[xx, yy];
+
+					if (value == 0)
+						continue;
+
+					var key = new Tuple<int, int>(xx+minX, maxY-yy);
+					SKAtomNode atom;
+
+					if (! atoms.TryGetValue(key, out atom))
+						return false;
+
+					if (atom.Value != value)
+						return false;
+				} 
+			}
+
+			return true;
+		}
+
+		public async Task Explosion(Action forEachAtom)
+		{
+			// Build list of Texture for the explosions
+			var explosion 	= SKTextureAtlas.FromName("Explosion");
+			var count 		= explosion.TextureNames.Length;
+			var textures 	= new SKTexture[count];
+
+			for(var i = 0; i < textures.Length; i++)
+			{
+				var name = "f" + (count-1-i);
+				textures[i] = explosion.TextureNamed(name);
+			}
+
+			// Explode atom one by one
+			foreach(var node in Obstables)
+			{
+				var atom = node as SKAtomNode;
+
+				if (atom != null)
+				{
+					var taskSource = new TaskCompletionSource<bool>();
+
+					atom.RunAction(SKAction.AnimateWithTextures(textures, 0.5 / count), () =>
+					{
+						atom.Hidden = true;
+						if (forEachAtom != null)
+							forEachAtom();
+						taskSource.SetResult(true);
+					});
+
+					await taskSource.Task;
+				}
 			}
 		}
 	}
