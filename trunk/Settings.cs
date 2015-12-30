@@ -7,14 +7,17 @@ namespace Atomix
 {
 	public class Settings : NSObject
 	{
-		bool			_dirty = false;
+		const string	SoundEnabledKey = "SoundEnabled";
+		const string	HiScoreKey		= "HiScore";
+		const string	LevelScoresKey	= "Scores";
 
-		bool			_soundEnabled = true;
-		int				_hiScore = 0;
-		HashSet<int>	_completedLevels = new HashSet<int>();
+		bool					_dirty = false;
+		bool					_soundEnabled = true;
+		int						_hiScore = 0;
+		Dictionary<int, int>	_completedLevels = new Dictionary<int, int>();
 
-		static Settings _instance = null;
-		static string 	_path = null;
+		static Settings 		_instance = null;
+		static string 			_path = null;
 
 		private Settings()
 		{
@@ -24,19 +27,19 @@ namespace Atomix
 		public Settings(NSCoder coder)
 		{
 			_dirty = false;
-			_soundEnabled = coder.DecodeBool("SoundEnabled");
-			_hiScore	  = coder.DecodeInt("HiScore");
+			_soundEnabled = coder.DecodeBool(SoundEnabledKey);
+			_hiScore	  = coder.DecodeInt(HiScoreKey);
 
-			var completed = coder.DecodeObject("Completed") as NSArray;
+			var completed = coder.DecodeObject(LevelScoresKey) as NSDictionary;
 
 			if (completed != null)
 			{
-				for(nuint i = 0 ; i < completed.Count ; i++)
+				foreach(NSObject key in completed.Keys)
 				{
-					var number = completed.GetItem<NSNumber>(i);
-					var level  = number.Int32Value;
+					var nsLevel = key as NSNumber;
+					var nsScore = completed.ObjectForKey(key) as NSNumber;
 
-					_completedLevels.Add(level);
+					 _completedLevels[nsLevel.Int32Value] = nsScore.Int32Value; 
 				}
 			}
 		}
@@ -46,31 +49,44 @@ namespace Atomix
 		{
 			_dirty = false;
 
-			coder.Encode(_soundEnabled, "SoundEnabled");
-			coder.Encode(_hiScore, "HiScore");
+			coder.Encode(_soundEnabled, SoundEnabledKey);
+			coder.Encode(_hiScore, HiScoreKey);
 
-			var levels = new NSMutableArray((nuint) _completedLevels.Count);
+			var levels = new NSMutableDictionary();
 
-			foreach(int l in _completedLevels)
+			foreach(KeyValuePair<int, int> entry in _completedLevels)
 			{
-				var level = NSNumber.FromInt32(l);
-				levels.Add(level);
+				var level = NSNumber.FromInt32(entry.Key);
+				var score = NSNumber.FromInt32(entry.Value);
+				levels.Add(level, score);
 			}
 
-			coder.Encode(levels, "Completed");
+			coder.Encode(levels, LevelScoresKey);
 		}
 
-		public bool IsLevelCompleted(int level)
+		public bool IsLevelCompleted(int level, int score)
 		{
-			return _completedLevels.Contains(level);
+			return GetLevelScore(level) > 0;
 		}
 
-		public void SetLevelCompleted(int level)
+		public int GetLevelScore(int level)
 		{
-			if (! IsLevelCompleted(level)) // Already Completed?
+			int score;
+
+			if (_completedLevels.TryGetValue(level, out score))
+				return score ;
+			else
+				return 0;
+		}
+
+		public void SetLevelCompleted(int level, int score)
+		{
+			int oldScore = GetLevelScore(level);
+
+			if (oldScore < score)
 			{
-				_completedLevels.Add(level);
 				_dirty = true;
+				_completedLevels[level] = score;
 			}
 		}
 

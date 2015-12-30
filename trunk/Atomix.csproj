@@ -104,18 +104,10 @@
     <ImageAsset Include="Resources\Images.xcassets\Preview.imageset\preview.png" />
     <ImageAsset Include="Resources\Images.xcassets\Level-Menu.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\Level-Menu.imageset\levsel2.png" />
-    <ImageAsset Include="Resources\Images.xcassets\StartButtonNormal.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\StartButtonSelected.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\StartButtonNormal.imageset\StartButtonNormal.png" />
-    <ImageAsset Include="Resources\Images.xcassets\StartButtonSelected.imageset\StartButtonSelected.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-76x76.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-152x152.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-167x167.png" />
-    <ImageAsset Include="Resources\Images.xcassets\SoundOn.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\SoundOff.imageset\Contents.json" />
-    <ImageAsset Include="Resources\Images.xcassets\SoundOff.imageset\Volume-Off.png" />
-    <ImageAsset Include="Resources\Images.xcassets\SoundOn.imageset\Volume-On.png" />
     <ImageAsset Include="Resources\Images.xcassets\Timeout.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\Timeout.imageset\timeout.png" />
   </ItemGroup>
@@ -161,11 +153,7 @@
     <Folder Include="Resources\Images.xcassets\Intro-3.imageset\" />
     <Folder Include="Resources\Images.xcassets\Preview.imageset\" />
     <Folder Include="Resources\Images.xcassets\Level-Menu.imageset\" />
-    <Folder Include="Resources\Images.xcassets\StartButtonNormal.imageset\" />
-    <Folder Include="Resources\Images.xcassets\StartButtonSelected.imageset\" />
     <Folder Include="Resources\Sounds\" />
-    <Folder Include="Resources\Images.xcassets\SoundOn.imageset\" />
-    <Folder Include="Resources\Images.xcassets\SoundOff.imageset\" />
     <Folder Include="Resources\Images.xcassets\Timeout.imageset\" />
   </ItemGroup>
   <ItemGroup>
@@ -374,6 +362,14 @@
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f7.png" />
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f8.png" />
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f9.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\SoundOff.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\SoundOn.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\StartButton+Selected.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\StartButton.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\exitButton+Selected.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\exitButton.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\retryButton+Selected.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\retryButton.png" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Sounds\bzzz.wav" />

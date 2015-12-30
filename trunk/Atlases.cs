@@ -47,6 +47,7 @@ namespace Atomix
 
 	public static class Atlases
 	{
+		static SKTextureAtlas 	_buttonsAtlas = null;
 		static SKTextureAtlas 	_wallsAtlas = null;
 		static SKTextureAtlas 	_atomsAtlas = null;
 		static SKTextureAtlas 	_smallAtomsAtlas = null;
@@ -62,6 +63,16 @@ namespace Atomix
 				_fontsAtlas[index-1] = SKTextureAtlas.FromName("Font"+index);
 
 			return _fontsAtlas[index-1];
+		}
+
+		public static SKTextureAtlas Buttons
+		{
+			get
+			{
+				if (_buttonsAtlas == null)
+					_buttonsAtlas = SKTextureAtlas.FromName("Buttons");
+				return _buttonsAtlas;
+			}
 		}
 
 		public static SKTextureAtlas Walls

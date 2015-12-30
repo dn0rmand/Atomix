@@ -10,21 +10,24 @@ namespace Atomix
 {
 	public class GameScene : SKScene
 	{
-		const int _firstLabelY = 240-16;
-		const int _sectionSpacing = 42;
+		const int		_textX = 8;
+		const int 		_sectionSpacing = 42;
+		const int		_labelHeight = 20;
+		const int 		_firstLabelY = Constants.GameHeight-16;
+		const int 		_firstValueY = _firstLabelY - _labelHeight;
 
 		Level			_level;
 		int				_currentLevel;
 		int				_score = 0;
+		int				_startScore= 0;
 		int				_time = 0;
-		bool			_timedout = false;
 
 		TextNode		_hiScoreNodes = null;
 		TextNode		_scoreNodes = null;
 		TextNode		_levelNodes = null;
 		TextNode		_timeNodes = null;
 
-		public GameScene(int level) : base(new CGSize(320, 240))
+		public GameScene(int level) : base(Constants.GameSize)
 		{
 			if (level < Constants.FirstLevel || level > Constants.LastLevel)
 				level = Constants.FirstLevel;
@@ -43,10 +46,10 @@ namespace Atomix
 		{			
 			// Labels
 
-			this.Write(8, _firstLabelY, "HISCORE", 3);
-			this.Write(8, _firstLabelY - _sectionSpacing, "SCORE", 3);
-			this.Write(8, _firstLabelY - _sectionSpacing*2, "LEVEL", 3);
-			this.Write(8, _firstLabelY - _sectionSpacing*3, "TIME", 3);
+			this.Write(_textX, _firstLabelY, "HISCORE", 3);
+			this.Write(_textX, _firstLabelY - _sectionSpacing, "SCORE", 3);
+			this.Write(_textX, _firstLabelY - _sectionSpacing*2, "LEVEL", 3);
+			this.Write(_textX, _firstLabelY - _sectionSpacing*3, "TIME", 3);
 
 			// Write Values that are not Level dependent
 
@@ -82,7 +85,7 @@ namespace Atomix
 			var minutes = (int)(time / 60);
 			var sTime = string.Format("{0}:{1:00}", minutes, seconds);
 
-			_timeNodes = this.Write(8, _firstLabelY - _sectionSpacing*3 - 20, sTime, 2);
+			_timeNodes = this.Write(_textX, _firstValueY - _sectionSpacing*3, sTime, 2);
 		}
 
 		void WriteHiScore()
@@ -92,7 +95,7 @@ namespace Atomix
 				_hiScoreNodes.Destroy();
 				_hiScoreNodes = null;
 			}
-			_hiScoreNodes = this.Write(8, _firstLabelY - 20, Settings.Instance.HiScore.ToString(), 2);
+			_hiScoreNodes = this.Write(_textX, _firstValueY, Settings.Instance.HiScore.ToString(), 2);
 		}
 
 		void WriteScore()
@@ -102,7 +105,7 @@ namespace Atomix
 				_scoreNodes.Destroy();
 				_scoreNodes = null;
 			}
-			_scoreNodes = this.Write(8, _firstLabelY - _sectionSpacing - 20, _score.ToString(), 2);
+			_scoreNodes = this.Write(_textX, _firstValueY - _sectionSpacing, _score.ToString(), 2);
 		}
 
 		void WriteLevelNumber()
@@ -115,12 +118,13 @@ namespace Atomix
 			if (_level != null)
 			{
 				var lev = string.Format("{0:00}", _level.LevelNumber);
-				_levelNodes = this.Write(8, _firstLabelY - _sectionSpacing*2 - 20, lev, 2);
+				_levelNodes = this.Write(_textX, _firstValueY - _sectionSpacing*2, lev, 2);
 			}
 		}
 
 		void CreateLevel(int level)
 		{
+			_startScore = _score;
 			_level = Level.Create(level);
 			_level.AddToScene(this);
 			_time = _level.Duration;
@@ -142,6 +146,8 @@ namespace Atomix
 		{
 			if (_level == null)
 			{
+				if (_currentLevel > Constants.FirstLevel)
+					_score = Settings.Instance.GetLevelScore(_currentLevel-1); // Start with Score of Previous Level
 				CreateLevel(_currentLevel);
 			}
 			else if (_level.LevelNumber < Constants.LastLevel)
@@ -166,7 +172,7 @@ namespace Atomix
 		public async Task Success()
 		{
 			SKAtomNode.Lock();
-			Settings.Instance.SetLevelCompleted(_level.LevelNumber);
+			Settings.Instance.SetLevelCompleted(_level.LevelNumber, _score);
 
 			_done 	  = true;
 			_nextTick = null;
@@ -188,7 +194,6 @@ namespace Atomix
 
 		void Timeout()
 		{
-			_timedout = true;
 			_done = true;
 			SKAtomNode.Lock(); // No more moving atoms
 
@@ -197,14 +202,40 @@ namespace Atomix
 			timeout.Position = CGPoint.Empty;
 			timeout.AnchorPoint = CGPoint.Empty;
 			this.Add(timeout);
-		}
 
-		public override void TouchesBegan (NSSet touches, UIEvent evt)
-		{
-			if (_timedout)
+			var center = new CGPoint(this.Frame.GetMidX(), this.Frame.GetMidY());
+
+			var exitButton = SKButton.Create("ExitButton");
+
+			exitButton.Position  = new CGPoint(center.X, center.Y - _sectionSpacing / 2);
+			exitButton.AnchorPoint= new CGPoint(0.5, 0.5);
+
+			var retryButton = SKButton.Create("RetryButton");
+
+			retryButton.Position  = new CGPoint(center.X, center.Y - _sectionSpacing / 2 - _sectionSpacing);
+			retryButton.AnchorPoint= new CGPoint(0.5, 0.5);
+
+			this.Add(exitButton);
+			this.Add(retryButton);
+
+			exitButton.Clicked += (sender, e) => 
 			{
+				timeout.Destroy();
+				exitButton.Destroy();
+				retryButton.Destroy();
+
 				GotoIntroScene();
-			}
+			};
+
+			retryButton.Clicked += (sender, e) => 
+			{
+				timeout.Destroy();
+				exitButton.Destroy();
+				retryButton.Destroy();
+
+				_score = _startScore; // Resert score to what it was at the start of the level
+				CreateLevel(_level.LevelNumber);
+			};
 		}
 
 		public override void WillMoveFromView (SKView view)

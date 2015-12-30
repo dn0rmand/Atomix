@@ -51,7 +51,7 @@ namespace Atomix
 		UITapGestureRecognizer		_tapGesture = null;
 		GestureRecognizerFilter		_gestureFilter = null;
 
-		public IntroScene() : base(new CGSize(320, 240))
+		public IntroScene() : base(Constants.GameSize)
 		{
 			this.ScaleMode = SKSceneScaleMode.AspectFit;
 			this.BackgroundColor = UIColor.FromRGB(0xC3, 0xC3, 0xE3);
@@ -66,9 +66,9 @@ namespace Atomix
 		{
 			var image = SKSpriteNode.FromImageNamed(name);
 
-			image.Position = CGPoint.Empty;
-			image.AnchorPoint = CGPoint.Empty;
-			image.ZPosition = 100;
+			image.Position = new CGPoint(Constants.GameWidth/2, Constants.GameHeight/2);
+			image.AnchorPoint = new CGPoint(0.5, 0.5); //.Empty;
+			image.ZPosition = Constants.IntroImageZIndex;
 			this.Add(image);
 
 			return image;
@@ -142,18 +142,16 @@ namespace Atomix
 			soundOnOff.Clicked += SwitchSound;
 
 			soundOnOff.Position = new CGPoint(55, _buttonStartY-5);
-			soundOnOff.AnchorPoint = new CGPoint(0,1);
-			soundOnOff.ZPosition = Constants.FrameZIndex + 100;
+			soundOnOff.AnchorPoint = new CGPoint(0, 1);
 
 			this.Add(soundOnOff);
 
-			var button = SKButton.Create("StartButtonNormal", "StartButtonSelected");
+			var button = SKButton.Create("StartButton");
 			button.Clicked += StartGame;
 
 			var x = (this.Size.Width - button.Size.Width)/2;
 			button.Position = new CGPoint(x, _buttonStartY);
 			button.AnchorPoint = new CGPoint(0, 1);
-			button.ZPosition = Constants.FrameZIndex+100;
 
 			this.Add(button);
 
@@ -294,6 +292,7 @@ namespace Atomix
 				_lastRun = currentTime;
 				_delay   = 2;
 				_intro   = CreateImage("Logo"); 
+				_intro.ZPosition = Constants.FrameZIndex + 1;
 			}
 
 			if (! _showingMenu)

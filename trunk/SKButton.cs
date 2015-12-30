@@ -11,13 +11,24 @@ namespace Atomix
 		bool		_enabled;
 		bool		_selected;
 
-		public static SKButton Create(string normal, string selected = null, string disabled = null)
+		public static SKButton Create(string normal)
+		{
+			return Create(normal, null, null);
+		}
+
+		public static SKButton Create(string normal, string selected, string disabled)
 		{			
+			if (normal == null)
+				throw new ArgumentException("normal");
+			if (selected == null)
+				selected = normal + "+Selected";
+
 			SKTexture normalTexture, selectedTexture, disabledTexture;
 
-			normalTexture 	= SKTexture.FromImageNamed(normal);
-			selectedTexture = selected != null ? SKTexture.FromImageNamed(selected) : null;
-			disabledTexture = disabled != null ? SKTexture.FromImageNamed(disabled) : null;
+			normalTexture 	= Atlases.Buttons.TextureNamed(normal);
+			selectedTexture = Atlases.Buttons.TextureNamed(selected);
+
+			disabledTexture = disabled != null ? Atlases.Buttons.TextureNamed(disabled) : null;
 
 			return new SKButton(normalTexture, selectedTexture, disabledTexture);
 		}
@@ -49,8 +60,8 @@ namespace Atomix
 			DisabledTexture = disabled;
 			Enabled 		= true;
 			Selected 		= false;
-
-			this.UserInteractionEnabled = true;
+			ZPosition  		= Constants.ButtonZIndex;
+			UserInteractionEnabled = true;
 		}
 
 		public SKTexture SelectedTexture	{ get; set; }
@@ -132,6 +143,10 @@ namespace Atomix
 
 		public override void TouchesEnded(NSSet touches, UIEvent evt)
 		{			
+			base.TouchesEnded(touches, evt);
+
+			Selected = false;
+
 			if (Enabled)
 			{
 				var handle = Clicked;
@@ -143,9 +158,6 @@ namespace Atomix
 						handle(this, EventArgs.Empty);
 				}
 			}
-
-			Selected = false;
-			base.TouchesEnded(touches, evt);
 		}
 
 		public override void TouchesCancelled (Foundation.NSSet touches, UIEvent evt)

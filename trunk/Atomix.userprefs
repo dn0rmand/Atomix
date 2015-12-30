@@ -1,11 +1,15 @@
 ﻿<Properties StartupItem="Atomix.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget.Dominique’s iPhone6" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="GameScene.cs">
     <Files>
-      <File FileName="IntroScene.cs" Line="106" Column="77" />
-      <File FileName="SKButton.cs" Line="1" Column="1" />
-      <File FileName="Constants.cs" Line="1" Column="1" />
-      <File FileName="GameScene.cs" Line="23" Column="22" />
+      <File FileName="GameScene.cs" Line="241" Column="7" />
+      <File FileName="Atlases.cs" Line="27" Column="1" />
+      <File FileName="IntroScene.cs" Line="301" Column="48" />
+      <File FileName="Level.cs" Line="222" Column="5" />
+      <File FileName="AppDelegate.cs" Line="16" Column="1" />
+      <File FileName="Settings.cs" Line="26" Column="1" />
+      <File FileName="SpecialNodes.cs" Line="254" Column="31" />
+      <File FileName="Constants.cs" Line="26" Column="34" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
@@ -13,6 +17,8 @@
       <Breakpoint file="/Users/dnormand/Projects/BetterCodes/Atomix/Levels.cs" line="202" column="1" />
       <Breakpoint file="/Users/dnormand/Projects/BetterCodes/Atomix/Levels.cs" line="219" column="1" />
       <Breakpoint file="/Users/dnormand/Projects/BetterCodes/Atomix/Levels.cs" line="194" column="1" />
+      <Breakpoint file="/Users/dnormand/Projects/BetterCodes/Atomix/Settings.cs" line="119" column="1" />
+      <Breakpoint file="/Users/dnormand/Projects/BetterCodes/Atomix/Settings.cs" line="47" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
