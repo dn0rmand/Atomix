@@ -185,6 +185,7 @@ namespace Atomix
 			field.CursorType	= dataReader.Byte;
 			field.Background 	= dataReader.Byte;
 
+			//field.Duration  = 5;
 			return field;
 		}
 	}

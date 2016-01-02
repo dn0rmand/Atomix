@@ -37,13 +37,14 @@ namespace Atomix
 			}
 		}
 
-		SKSpriteNode 				_intro;
-		int						 	_index;
-		int						 	_level = Constants.FirstLevel;
+		SKSpriteNode 				_intro = null;
 		SKSpriteNode		 		_preview = null;
+
+		int						 	_index;
 		double						_lastRun;
 		double						_delay = 0;
-		bool						_showingMenu = false;
+		bool						_showingHelp = false;
+		bool						_showingIntro = false;
 		bool						_switchingPreview = false;
 		bool						_didTouch = false;
 		UISwipeGestureRecognizer	_swipeLeftGesture = null;
@@ -86,17 +87,13 @@ namespace Atomix
 
 		void SwitchPreview(int direction)
 		{
-			if (_switchingPreview || ! _showingMenu)
+			if (_switchingPreview || _showingIntro || _showingHelp)
 				return;
 
-			_level += direction;
-			if (_level < Constants.FirstLevel)
-				_level = Constants.LastLevel;
-			else if (_level > Constants.LastLevel)
-				_level = Constants.FirstLevel;
+			Settings.Instance.CurrentLevel += direction;
 
-			var curPreview	= _preview;
-			var newPreview = CreatePreview(_level);
+			var curPreview = _preview;
+			var newPreview = CreatePreview(Settings.Instance.CurrentLevel);
 
 			newPreview.AnchorPoint = CGPoint.Empty;
 			newPreview.Position    = new CGPoint(direction * _slidingWidth, 0);
@@ -118,10 +115,32 @@ namespace Atomix
 			{
 				newPreview.RunAction(moveRight, () => {
 					_switchingPreview = false;
+					ShowCompleted(newPreview, Settings.Instance.CurrentLevel);
 				});
 			}
 
+			if (_menuItems != null)
+			{
+				_menuItems.Remove(curPreview);
+				_menuItems.Add(newPreview);
+			}
+
 			_preview = newPreview;
+		}
+
+		void ShowCompleted(SKSpriteNode preview, int level)
+		{
+			if (Settings.Instance.IsLevelCompleted(level))
+			{
+				var completed = SKSpriteNode.FromImageNamed("Completed");
+				completed.AnchorPoint = new CGPoint(0.5, 0.5);
+				completed.Position	  = new CGPoint(this.Size.Width/2 + 6, this.Size.Height/2 - 6);
+				completed.ZPosition   = Constants.ButtonZIndex;
+				completed.SetScale(5);
+				preview.Add(completed);
+
+				completed.RunAction(SKAction.ScaleTo(1, 0.25));
+			}
 		}
 
 		void NextPreview()
@@ -134,51 +153,111 @@ namespace Atomix
 			SwitchPreview(-1);
 		}
 
+		IList<SKNode>	_menuItems = null;
+
+		void DestroyMenu()
+		{
+			_tapGesture.Enabled = true;
+
+			_swipeLeftGesture.Destroy(this.View);
+			_swipeLeftGesture = null;
+
+			_swipeRightGesture.Destroy(this.View);
+			_swipeRightGesture = null;
+
+			if (_gestureFilter != null)
+				_gestureFilter.Dispose();
+			_gestureFilter = null;
+
+			if (_preview != null)
+			{
+				_preview.Paused = true;
+				_preview = null;
+				_switchingPreview = false;
+			}
+
+			if (_menuItems != null)
+			{
+				foreach(SKNode node in _menuItems)
+					node.Destroy();
+				_menuItems.Clear();
+				_menuItems = null;
+			}
+		}
+
 		void CreateMenu()
 		{
-			CreateImage("Level-Menu");
+			DestroyMenu();
+			DisposeIntro();
 
-			var soundOnOff = SKButton.Create(AppDelegate.SoundEnabled ? "SoundOn" : "SoundOff");
-			soundOnOff.Clicked += SwitchSound;
+			_menuItems = new List<SKNode>();
 
-			soundOnOff.Position = new CGPoint(55, _buttonStartY-5);
-			soundOnOff.AnchorPoint = new CGPoint(0, 1);
+			var menu		= CreateImage("Level-Menu");
+			var help 		= SKButton.Create("Help");
+			var soundOnOff	= SKButton.Create(Settings.Instance.SoundEnabled ? "SoundOn" : "SoundOff");
+			var startButton = SKButton.Create("StartButton");
 
-			this.Add(soundOnOff);
+			_preview = CreatePreview(Settings.Instance.CurrentLevel);
 
-			var button = SKButton.Create("StartButton");
-			button.Clicked += StartGame;
+			// Handlers
 
-			var x = (this.Size.Width - button.Size.Width)/2;
-			button.Position = new CGPoint(x, _buttonStartY);
-			button.AnchorPoint = new CGPoint(0, 1);
+			help.Clicked += (sender, e) => 
+			{
+				DestroyMenu();
+				_showingHelp = true;
+				_intro = CreateImage("Instructions");
+			};
 
-			this.Add(button);
+			soundOnOff.Clicked 	+= SwitchSound;
+			startButton.Clicked += StartGame;
 
-			_level   = 1;
+			// Positions
 
-			_preview = CreatePreview(_level);
-			_preview.AnchorPoint = CGPoint.Empty;
+			help.AnchorPoint 		= new CGPoint(-1, 1);
+			soundOnOff.AnchorPoint 	= new CGPoint(2, 1);
+			startButton.AnchorPoint = new CGPoint(0.5, 1);
+			_preview.AnchorPoint 	= CGPoint.Empty;
+
+			help.Position 	 	 = new CGPoint(this.Size.Width/2, _buttonStartY);
+			soundOnOff.Position  = new CGPoint(this.Size.Width/2, _buttonStartY);
+			startButton.Position = new CGPoint(this.Size.Width/2, _buttonStartY);
 			_preview.Position    = CGPoint.Empty;
+
+			// Add 
+
+			this.Add(help);
+			this.Add(soundOnOff);
+			this.Add(startButton);
 			this.Add(_preview);
+
+			_menuItems.Add(menu);
+			_menuItems.Add(help);
+			_menuItems.Add(soundOnOff);
+			_menuItems.Add(startButton);
+			_menuItems.Add(_preview);
+
+			// Build Preview
+
+			ShowCompleted(_preview, Settings.Instance.CurrentLevel);
 
 			// Create Gestures
 
-			_gestureFilter = new GestureRecognizerFilter(this);
+			_tapGesture.Enabled = false;
+			_gestureFilter 		= new GestureRecognizerFilter(this);
+			_swipeLeftGesture 	= new UISwipeGestureRecognizer(HandleSwipeLeft);
+			_swipeRightGesture	= new UISwipeGestureRecognizer(HandleSwipeRight);
 
-			_swipeLeftGesture = new UISwipeGestureRecognizer(HandleSwipeLeft);
-			_swipeRightGesture = new UISwipeGestureRecognizer(HandleSwipeRight);
-
-			_swipeLeftGesture.Direction = UISwipeGestureRecognizerDirection.Left;
+			_swipeLeftGesture.Direction  = UISwipeGestureRecognizerDirection.Left;
 			_swipeRightGesture.Direction = UISwipeGestureRecognizerDirection.Right;
 
-			_swipeLeftGesture.Delegate = _gestureFilter;
+			_swipeLeftGesture.Delegate 	= _gestureFilter;
 			_swipeRightGesture.Delegate = _gestureFilter;
 
 			View.AddGestureRecognizer(_swipeLeftGesture);
 			View.AddGestureRecognizer(_swipeRightGesture);
 
-			_showingMenu = true;
+			_showingIntro = false;
+			_showingHelp  = false;
 		}
 
 		void DisposeIntro()
@@ -188,8 +267,8 @@ namespace Atomix
 
 			if (_index > 3)
 			{
-				_tapGesture.Destroy(View);
-				_tapGesture = null;
+//				_tapGesture.Destroy(View);
+//				_tapGesture = null;
 			}
 		}
 
@@ -206,11 +285,10 @@ namespace Atomix
 			else
 			{
 				CreateMenu();
-				_showingMenu = true;
 			}
 		}
 
-		public override void DidMoveToView (SKView view)
+		public override void DidMoveToView(SKView view)
 		{
 			var node = SKSpriteNode.FromImageNamed("InfoScreen");
 			node.Position = CGPoint.Empty;
@@ -222,13 +300,9 @@ namespace Atomix
 			view.AddGestureRecognizer(_tapGesture);
 		}
 
-		public override void WillMoveFromView (SKView view)
+		public override void WillMoveFromView(SKView view)
 		{
-			_swipeLeftGesture.Destroy(view);
-			_swipeLeftGesture = null;
-
-			_swipeRightGesture.Destroy(view);
-			_swipeRightGesture = null;
+			DestroyMenu();
 
 			_tapGesture.Destroy(view);
 			_tapGesture = null;
@@ -255,7 +329,7 @@ namespace Atomix
 		void StartGame(object sender, EventArgs e)
 		{
 			var transition = SKTransition.CrossFadeWithDuration(0.5);
-			var game = new GameScene(_level);
+			var game = new GameScene();
 			this.View.PresentScene(game, transition);
 		}
 
@@ -263,8 +337,8 @@ namespace Atomix
 		{
 			var button = sender as SKButton;
 
-			AppDelegate.SoundEnabled = ! AppDelegate.SoundEnabled;
-			if (AppDelegate.SoundEnabled)
+			Settings.Instance.SoundEnabled = ! Settings.Instance.SoundEnabled;
+			if (Settings.Instance.SoundEnabled)
 				button.Texture = button.NormalTexture = SKTexture.FromImageNamed("SoundOn");
 			else
 				button.Texture = button.NormalTexture = SKTexture.FromImageNamed("SoundOff");
@@ -272,17 +346,9 @@ namespace Atomix
 
 		void HandleTap(UITapGestureRecognizer sender)
 		{
-			if (_showingMenu)
-			{
-				var touchLocation = sender.LocationInView(sender.View);
-
-		        touchLocation = this.ConvertPointFromView(touchLocation);
-		        touchLocation.Y = this.Size.Height - touchLocation.Y;
-			}
-			else // Anywhere is good enough since we're not showing the menu yet.
-			{
+			if (_showingIntro || _showingHelp)
+				// Anywhere is good enough since we're not showing the menu yet.
 				_didTouch = true;
-			}
 		}
 
 		public override void Update (double currentTime)
@@ -292,10 +358,11 @@ namespace Atomix
 				_lastRun = currentTime;
 				_delay   = 2;
 				_intro   = CreateImage("Logo"); 
-				_intro.ZPosition = Constants.FrameZIndex + 1;
+				_intro.ZPosition = Constants.LogoZIndex;
+				_showingIntro = true;
 			}
 
-			if (! _showingMenu)
+			if (_showingIntro)
 			{
 				var timeSinceLast = currentTime - _lastRun;
 				if (timeSinceLast > _delay || _didTouch)
@@ -305,6 +372,11 @@ namespace Atomix
 					_lastRun  = currentTime;
 					SwitchIntro();
 				}
+			}
+			else if (_showingHelp && _didTouch)
+			{
+				_didTouch = false;
+				CreateMenu();
 			}
 		}
 	}

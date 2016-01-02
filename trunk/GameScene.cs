@@ -8,6 +8,19 @@ using System.Threading.Tasks;
 
 namespace Atomix
 {
+	using CountDownSource = TaskCompletionSource<bool>;
+
+	enum GameState
+	{
+		Undefined,
+		Starting,
+		Running,
+		Success,
+		StartCountDown,
+		CountingDown,
+		Finished
+	}
+
 	public class GameScene : SKScene
 	{
 		const int		_textX = 8;
@@ -17,21 +30,24 @@ namespace Atomix
 		const int 		_firstValueY = _firstLabelY - _labelHeight;
 
 		Level			_level;
-		int				_currentLevel;
 		int				_score = 0;
 		int				_startScore= 0;
 		int				_time = 0;
+
+		CountDownSource	_countDown = null;
+		double 			_nextTick;
+		bool			_firstRun = true;
+		GameState		_status = GameState.Undefined;
 
 		TextNode		_hiScoreNodes = null;
 		TextNode		_scoreNodes = null;
 		TextNode		_levelNodes = null;
 		TextNode		_timeNodes = null;
+		SKButton		_pauseButton = null;
+		SKNode			_pausedScreen = null;
 
-		public GameScene(int level) : base(Constants.GameSize)
+		public GameScene() : base(Constants.GameSize)
 		{
-			if (level < Constants.FirstLevel || level > Constants.LastLevel)
-				level = Constants.FirstLevel;
-			_currentLevel = level;
 			_level = null;
 
 			this.ScaleMode = SKSceneScaleMode.AspectFit;
@@ -44,6 +60,19 @@ namespace Atomix
 
 		public override void DidMoveToView (SKView view)
 		{			
+			// Add Pause Button
+
+			_pauseButton = SKButton.Create("Pause");
+
+			_pauseButton.Position = new CGPoint(Constants.GameWidth - _pauseButton.Size.Width, 0);
+			_pauseButton.AnchorPoint = CGPoint.Empty;
+			_pauseButton.Clicked += (sender, e) =>
+			{
+				this.Paused = true;
+			};
+
+			this.Add(_pauseButton);
+
 			// Labels
 
 			this.Write(_textX, _firstLabelY, "HISCORE", 3);
@@ -124,6 +153,8 @@ namespace Atomix
 
 		void CreateLevel(int level)
 		{
+			Settings.Instance.CurrentLevel = level;
+
 			_startScore = _score;
 			_level = Level.Create(level);
 			_level.AddToScene(this);
@@ -131,11 +162,9 @@ namespace Atomix
 			WriteLevelNumber();
 			WriteTime();
 
-			// Reset timer
+			// Start Game
 
-			_nextTick = null;
-			_done = false;
-			_countDown = null;
+			_status = GameState.Starting;
 
 			// Allow user to move Atoms
 
@@ -146,9 +175,9 @@ namespace Atomix
 		{
 			if (_level == null)
 			{
-				if (_currentLevel > Constants.FirstLevel)
-					_score = Settings.Instance.GetLevelScore(_currentLevel-1); // Start with Score of Previous Level
-				CreateLevel(_currentLevel);
+				if (Settings.Instance.CurrentLevel > Constants.FirstLevel)
+					_score = Settings.Instance.GetLevelScore(Settings.Instance.CurrentLevel - 1); // Start with Score of Previous Level
+				CreateLevel(Settings.Instance.CurrentLevel);
 			}
 			else if (_level.LevelNumber < Constants.LastLevel)
 			{
@@ -169,32 +198,61 @@ namespace Atomix
 			this.View.PresentScene(intro, transition);
 		}
 
-		public async Task Success()
+		void HidePausedScreen()
 		{
-			SKAtomNode.Lock();
-			Settings.Instance.SetLevelCompleted(_level.LevelNumber, _score);
+			if (_pausedScreen != null)
+				_pausedScreen.Hidden = true;
+			if (_pauseButton != null)
+				_pauseButton.Hidden = false;		
+		}
 
-			_done 	  = true;
-			_nextTick = null;
+		void ShowPausedScreen()
+		{
+			if (_pausedScreen == null)
+			{
+				var black = SKSpriteNode.FromImageNamed("Black");
+				black.AnchorPoint = CGPoint.Empty;
+				black.Position    = CGPoint.Empty;
+				black.ZPosition   = Constants.FrameZIndex + 1;
+				this.Add(black);
 
-			await _level.Explosion(() => { IncrementScore(500); });
+				var resume = SKButton.Create("Resume");
+				resume.Position = new CGPoint(black.Size.Width / 2, black.Size.Height / 2);
+				resume.AnchorPoint = new CGPoint(0.5, 0.5);
+				black.Add(resume);
 
-			// Count down remaining time and increment Score
+				var exitButton = SKButton.Create("ExitButton");
 
-			_countDown = new TaskCompletionSource<bool>();
-			await _countDown.Task;
-			await Task.Delay(500); // Litte delay at the end of the count down
+				exitButton.Position   = new CGPoint(black.Size.Width / 2, black.Size.Height / 2);
+				exitButton.AnchorPoint= new CGPoint(-1.5, 0.5);
+				black.Add(exitButton);
 
-			// Now is a good time to save settings
-			Settings.Instance.Save();
+				_pausedScreen = black;
 
-			// Move to next Level
-			NextLevel();
+				resume.Clicked += (sender, e) =>
+				{
+					Paused = false;
+				};
+
+				exitButton.Clicked += (sender, e) => 
+				{
+					GotoIntroScene();
+				};
+			}
+
+			_pausedScreen.Hidden = false;	
+
+			if (_pauseButton != null)
+				_pauseButton.Hidden  = true;		
 		}
 
 		void Timeout()
 		{
-			_done = true;
+			if (_pauseButton != null)
+				_pauseButton.Hidden  = true;		
+
+			_status = GameState.Finished;
+
 			SKAtomNode.Lock(); // No more moving atoms
 
 			var timeout = new SKSpriteNode(SKTexture.FromImageNamed("Timeout"));
@@ -203,17 +261,16 @@ namespace Atomix
 			timeout.AnchorPoint = CGPoint.Empty;
 			this.Add(timeout);
 
-			var center = new CGPoint(this.Frame.GetMidX(), this.Frame.GetMidY());
-
+			var retryButton = SKButton.Create("RetryButton");
 			var exitButton = SKButton.Create("ExitButton");
 
-			exitButton.Position  = new CGPoint(center.X, center.Y - _sectionSpacing / 2);
-			exitButton.AnchorPoint= new CGPoint(0.5, 0.5);
+			var center = new CGPoint(this.Frame.GetMidX(), this.Frame.GetMidY());
 
-			var retryButton = SKButton.Create("RetryButton");
-
-			retryButton.Position  = new CGPoint(center.X, center.Y - _sectionSpacing / 2 - _sectionSpacing);
+			retryButton.Position  = new CGPoint(center.X, center.Y - _sectionSpacing);
 			retryButton.AnchorPoint= new CGPoint(0.5, 0.5);
+
+			exitButton.Position  = new CGPoint(center.X + retryButton.Size.Width, center.Y - _sectionSpacing);
+			exitButton.AnchorPoint= new CGPoint(0.5, 0.5);
 
 			this.Add(exitButton);
 			this.Add(retryButton);
@@ -229,13 +286,44 @@ namespace Atomix
 
 			retryButton.Clicked += (sender, e) => 
 			{
+				if (_pauseButton != null)
+					_pauseButton.Hidden = false;		
+
 				timeout.Destroy();
 				exitButton.Destroy();
 				retryButton.Destroy();
 
 				_score = _startScore; // Resert score to what it was at the start of the level
+				_firstRun = true;
 				CreateLevel(_level.LevelNumber);
 			};
+		}
+
+		public async Task Success()
+		{
+			// Set Status as Success
+			_status = GameState.Success;
+
+			SKAtomNode.Lock();
+
+			await _level.Explosion(() => { IncrementScore(500); });
+
+			// Count down remaining time and increment Score
+
+			_countDown = new CountDownSource();
+
+			_status = GameState.StartCountDown;
+			await _countDown.Task;
+			_status = GameState.Finished;
+
+			// Set Level as Completed and save it's Score ( if higher )
+			Settings.Instance.SetLevelCompleted(_level.LevelNumber, _score);
+
+			// Now is a good time to save settings
+			Settings.Instance.Save();
+
+			// Move to next Level
+			NextLevel();
 		}
 
 		public override void WillMoveFromView (SKView view)
@@ -246,57 +334,89 @@ namespace Atomix
 			this.Dispose();
 		}
 
-		bool						_done = false;
-		TaskCompletionSource<bool>	_countDown = null;
-		double? 					_nextTick = null;
+		public override bool Paused 
+		{
+			get 
+			{
+				return base.Paused;
+			}
+			set 
+			{
+				if (base.Paused != value && (_status == GameState.Running || _status == GameState.CountingDown))
+				{
+					var currentTime = NSDate.Now.SecondsSinceReferenceDate;
+					if (value) 
+						_nextTick -= currentTime;
+					else
+						_nextTick += currentTime;
+				}
+
+				if (! _firstRun)
+				{
+					if (value)
+						ShowPausedScreen();
+					else
+						HidePausedScreen();
+				}
+
+				base.Paused = value;
+			}
+		}
 
 		public override void Update (double currentTime)
 		{
-			if (! _done)
+			currentTime = NSDate.Now.SecondsSinceReferenceDate; // Use my own currentTime
+			switch (_status)
 			{
-				// Initialize _nextTick if necessary
-				if (_nextTick == null)
-					_nextTick = currentTime + 1;
+				case GameState.Starting:
+					_nextTick = currentTime+1;
+					_status = GameState.Running;
+					if (! _firstRun) // Switched to new Level, Pause						
+						Paused = true;
+					break;
 
-				if (_time == 0)
-				{
-					Timeout();
-				}
-				else
-				{
-					// Decrement Timer
-					if (currentTime >= _nextTick)
+				case GameState.Running:
+					_firstRun = false;
+					if (_time == 0)
+					{
+						Timeout();
+					}
+					else if (currentTime >= _nextTick)
 					{
 						_nextTick += 1;
-						_time	  -= 1;
+						_time     -= 1;
 						WriteTime();
 					}
-				}
-			}
-			else if (_countDown != null)
-			{
-				// Initialize _nextTick if necessary
-				if (_nextTick == null)
+					break;
+
+				case GameState.Finished:
+					break;
+
+				case GameState.StartCountDown:
 					_nextTick = currentTime;
+					_status = GameState.CountingDown;
+					break;
 
-				if (_time > 0)
-				{
-					int points = 0;
-
-					while (_time > 0 && currentTime >= _nextTick)
+				case GameState.CountingDown:
+					if (_time > 0)
 					{
-						_nextTick += 0.025;
-						_time 	  -= 1;
-						points	  += 10;
+						int points = 0;
+
+						while (_time > 0 && currentTime >= _nextTick)
+						{
+							_nextTick += 0.025;
+							_time 	  -= 1;
+							points	  += 10;
+						}
+						IncrementScore(points);
+						WriteTime();
 					}
-					IncrementScore(points);
-					WriteTime();
-				}
-				else
-				{
-					_countDown.SetResult(true);
-					_countDown = null;
-				}
+					else
+					{
+						_status = GameState.Finished;
+						_countDown.SetResult(true);
+					}				
+					break;
 			}
 		}
 	}

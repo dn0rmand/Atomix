@@ -26,9 +26,10 @@ namespace Atomix
 		public const float	FreeZIndex 		 = 20;
 		public const float	WallZIndex		 = 30;
 		public const float	AtomZIndex		 = 40;
-		public const float	IntroImageZIndex = 100;
-		public const float  FrameZIndex		 = 500;
-		public const float	ButtonZIndex	 = 600;
+		public const float	IntroImageZIndex = 50;
+		public const float  FrameZIndex		 = 60;
+		public const float	LogoZIndex		 = 70;
+		public const float	ButtonZIndex	 = 80;
 
 		public const int 	FirstLevel  = 1;
 		public const int 	LastLevel	= 30;
@@ -61,16 +62,6 @@ namespace Atomix
 				gesture.Delegate = null;
 				gesture.Dispose();
 			}
-		}
-
-		public static nfloat DistanceTo(this CGPoint a, CGPoint b)
-		{
-			var xx = b.X - a.X;
-			var yy = b.Y = a.Y;
-
-			var dd = xx*xx + yy*xx;
-
-			return NMath.Sqrt(dd);
 		}
 	}
 }

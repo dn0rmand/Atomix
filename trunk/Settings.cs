@@ -14,6 +14,7 @@ namespace Atomix
 		bool					_dirty = false;
 		bool					_soundEnabled = true;
 		int						_hiScore = 0;
+		int						_currentLevel = Constants.FirstLevel;
 		Dictionary<int, int>	_completedLevels = new Dictionary<int, int>();
 
 		static Settings 		_instance = null;
@@ -64,7 +65,21 @@ namespace Atomix
 			coder.Encode(levels, LevelScoresKey);
 		}
 
-		public bool IsLevelCompleted(int level, int score)
+		public int CurrentLevel
+		{
+			get { return _currentLevel; }
+			set 
+			{ 
+				if (value < Constants.FirstLevel)
+					value = Constants.LastLevel;
+				else if (value > Constants.LastLevel)
+					value = Constants.FirstLevel;
+
+				_currentLevel = value; 
+			}
+		}
+
+		public bool IsLevelCompleted(int level)
 		{
 			return GetLevelScore(level) > 0;
 		}
@@ -100,6 +115,8 @@ namespace Atomix
 			}
 		}
 
+		public event EventHandler SoundEnabledChanged;
+
 		public bool SoundEnabled 
 		{
 			get
@@ -108,8 +125,14 @@ namespace Atomix
 			}
 			set
 			{
-				_soundEnabled = value;
-				_dirty = true;
+				if (value != _soundEnabled)
+				{
+					_soundEnabled = value;
+					_dirty = true;
+					var handler = SoundEnabledChanged;
+					if (handler != null)
+						handler(this, EventArgs.Empty);
+				}
 			}
 		} 
 

@@ -110,6 +110,12 @@
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-167x167.png" />
     <ImageAsset Include="Resources\Images.xcassets\Timeout.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\Timeout.imageset\timeout.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Completed.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Completed.imageset\completed.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Black.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Black.imageset\black.png" />
+    <ImageAsset Include="Resources\Images.xcassets\Instructions.imageset\Contents.json" />
+    <ImageAsset Include="Resources\Images.xcassets\Instructions.imageset\Instructions.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -143,6 +149,7 @@
     <Compile Include="SKButton.cs" />
     <Compile Include="SpecialNodes.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="Music.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -155,6 +162,9 @@
     <Folder Include="Resources\Images.xcassets\Level-Menu.imageset\" />
     <Folder Include="Resources\Sounds\" />
     <Folder Include="Resources\Images.xcassets\Timeout.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Completed.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Black.imageset\" />
+    <Folder Include="Resources\Images.xcassets\Instructions.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <AtlasTexture Include="Resources\Walls.atlas\f0.png" />
@@ -364,18 +374,18 @@
     <AtlasTexture Include="Resources\SmallAtoms.atlas\f9.png" />
     <AtlasTexture Include="Resources\Buttons.atlas\SoundOff.png" />
     <AtlasTexture Include="Resources\Buttons.atlas\SoundOn.png" />
-    <AtlasTexture Include="Resources\Buttons.atlas\StartButton+Selected.png" />
     <AtlasTexture Include="Resources\Buttons.atlas\StartButton.png" />
-    <AtlasTexture Include="Resources\Buttons.atlas\exitButton+Selected.png" />
-    <AtlasTexture Include="Resources\Buttons.atlas\exitButton.png" />
-    <AtlasTexture Include="Resources\Buttons.atlas\retryButton+Selected.png" />
-    <AtlasTexture Include="Resources\Buttons.atlas\retryButton.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\Pause.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\Resume.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\Help.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\RetryButton.png" />
+    <AtlasTexture Include="Resources\Buttons.atlas\ExitButton.png" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Sounds\bzzz.wav" />
     <BundleResource Include="Resources\Sounds\end.mp3" />
-    <BundleResource Include="Resources\Sounds\explode.wav" />
     <BundleResource Include="Resources\Sounds\selected.wav" />
     <BundleResource Include="Resources\Sounds\title.mp3" />
+    <BundleResource Include="Resources\Sounds\explode.mp3" />
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@ namespace Atomix
 {
 	partial class Level : SKNode
 	{
+		static SKAction _explosionSound = SKAction.PlaySoundFileNamed("Sounds/explode.mp3", false);
+
 		#region Private Fields
 
 		int 				_maxX , _maxY;
@@ -244,9 +246,17 @@ namespace Atomix
 
 				if (atom != null)
 				{
+					SKAction explode;
+
 					var taskSource = new TaskCompletionSource<bool>();
 
-					atom.RunAction(SKAction.AnimateWithTextures(textures, 0.5 / count), () =>
+					var animate = SKAction.AnimateWithTextures(textures, 0.35 / count);
+					if (Settings.Instance.SoundEnabled)
+						explode = SKAction.Group(animate,_explosionSound);
+					else
+						explode = animate;
+
+					atom.RunAction(explode, () =>
 					{
 						atom.Hidden = true;
 						if (forEachAtom != null)

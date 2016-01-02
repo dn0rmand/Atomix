@@ -25,10 +25,9 @@ namespace Atomix
 
 			SKTexture normalTexture, selectedTexture, disabledTexture;
 
-			normalTexture 	= Atlases.Buttons.TextureNamed(normal);
-			selectedTexture = Atlases.Buttons.TextureNamed(selected);
-
-			disabledTexture = disabled != null ? Atlases.Buttons.TextureNamed(disabled) : null;
+			normalTexture 	= Atlases.Buttons.Get(normal);
+			selectedTexture = Atlases.Buttons.Get(selected);
+			disabledTexture = Atlases.Buttons.Get(disabled);
 
 			return new SKButton(normalTexture, selectedTexture, disabledTexture);
 		}

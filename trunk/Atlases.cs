@@ -54,6 +54,29 @@ namespace Atomix
 		static SKTextureAtlas 	_backgroundsAtlas = null;
 		static SKTextureAtlas[] _fontsAtlas = new SKTextureAtlas[3];
 
+		public static bool Contains(this SKTextureAtlas atlas, string name)
+		{
+			if (atlas == null || string.IsNullOrWhiteSpace(name))
+				return false;
+
+			if (! name.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+				name += ".png";
+
+			foreach(string texture in atlas.TextureNames)
+				if (texture == name)
+					return true;
+
+			return false;
+		}
+
+		public static SKTexture Get(this SKTextureAtlas atlas, string name)
+		{
+			if (atlas.Contains(name))
+				return atlas.TextureNamed(name);
+			else
+				return null;
+		}
+
 		public static SKTextureAtlas GetFont(int index)
 		{
 			if (index < 1 || index > 3)
