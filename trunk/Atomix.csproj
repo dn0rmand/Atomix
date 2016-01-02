@@ -104,7 +104,6 @@
     <ImageAsset Include="Resources\Images.xcassets\Preview.imageset\preview.png" />
     <ImageAsset Include="Resources\Images.xcassets\Level-Menu.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\Level-Menu.imageset\levsel2.png" />
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-76x76.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-152x152.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-167x167.png" />
@@ -116,6 +115,13 @@
     <ImageAsset Include="Resources\Images.xcassets\Black.imageset\black.png" />
     <ImageAsset Include="Resources\Images.xcassets\Instructions.imageset\Contents.json" />
     <ImageAsset Include="Resources\Images.xcassets\Instructions.imageset\Instructions.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-180x180.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-120x120.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-80x80.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-40x40.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-58x58.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-29x29.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon-87x87.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
