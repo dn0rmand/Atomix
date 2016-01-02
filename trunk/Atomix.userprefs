@@ -1,6 +1,12 @@
 ﻿<Properties StartupItem="Atomix.csproj">
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release|iPhone" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneDeviceTarget" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPadAir.9.2" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="CreditsScene.cs">
+    <Files>
+      <File FileName="GameScene.cs" Line="200" Column="1" />
+      <File FileName="CreditsScene.cs" Line="40" Column="77" />
+      <File FileName="IntroScene.cs" Line="332" Column="26" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
