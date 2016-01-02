@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using SpriteKit;
 using CoreGraphics;
-using System.Collections.Generic;
 
 namespace Atomix
 {

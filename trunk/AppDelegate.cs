@@ -1,7 +1,7 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
 using UIKit;
 using SpriteKit;
-using System;
 
 namespace Atomix
 {

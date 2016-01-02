@@ -1,10 +1,9 @@
-﻿using System;
-
+using System;
+using System.Collections.Generic;
 using CoreGraphics;
 using Foundation;
 using SpriteKit;
 using UIKit;
-using System.Collections.Generic;
 
 namespace Atomix
 {
@@ -330,6 +329,7 @@ namespace Atomix
 		{
 			var transition = SKTransition.CrossFadeWithDuration(0.5);
 			var game = new GameScene();
+//			var game = new CreditsScene();
 			this.View.PresentScene(game, transition);
 		}
 

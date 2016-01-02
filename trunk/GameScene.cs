@@ -1,10 +1,9 @@
 ﻿using System;
-
+using System.Threading.Tasks;
 using CoreGraphics;
 using Foundation;
 using SpriteKit;
 using UIKit;
-using System.Threading.Tasks;
 
 namespace Atomix
 {
@@ -31,7 +30,7 @@ namespace Atomix
 
 		Level			_level;
 		int				_score = 0;
-		int				_startScore= 0;
+		int				_startScore = 0;
 		int				_time = 0;
 
 		CountDownSource	_countDown = null;
@@ -156,6 +155,8 @@ namespace Atomix
 			Settings.Instance.CurrentLevel = level;
 
 			_startScore = _score;
+			if (_level != null)
+				_level.RemoveFromScene();
 			_level = Level.Create(level);
 			_level.AddToScene(this);
 			_time = _level.Duration;
@@ -326,7 +327,7 @@ namespace Atomix
 			NextLevel();
 		}
 
-		public override void WillMoveFromView (SKView view)
+		public override void WillMoveFromView(SKView view)
 		{
 			base.WillMoveFromView (view);
 			if (_level != null)
@@ -363,7 +364,7 @@ namespace Atomix
 			}
 		}
 
-		public override void Update (double currentTime)
+		public override void Update(double currentTime)
 		{
 			currentTime = NSDate.Now.SecondsSinceReferenceDate; // Use my own currentTime
 			switch (_status)
@@ -371,8 +372,8 @@ namespace Atomix
 				case GameState.Starting:
 					_nextTick = currentTime+1;
 					_status = GameState.Running;
-					if (! _firstRun) // Switched to new Level, Pause						
-						Paused = true;
+					//if (! _firstRun) // Switched to new Level, Pause						
+					//	Paused = true;
 					break;
 
 				case GameState.Running:
