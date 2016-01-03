@@ -199,12 +199,14 @@ namespace Atomix
 			else if (_level.LevelNumber < Constants.LastLevel)
 			{
 				int level = _level.LevelNumber+1;
-				_level.RemoveFromScene();
 				CreateLevel(level);
 			}
 			else
 			{
-				GotoMenuScene();
+				_firstRun = true;
+				var transition = SKTransition.CrossFadeWithDuration(0.5);
+				var intro = new CreditsScene();
+				this.View.PresentScene(intro, transition);
 			}
 		}
 
@@ -294,10 +296,6 @@ namespace Atomix
 
 			exitButton.Clicked += (sender, e) => 
 			{
-				timeout.Destroy();
-				exitButton.Destroy();
-				retryButton.Destroy();
-
 				GotoMenuScene();
 			};
 

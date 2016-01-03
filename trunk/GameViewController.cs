@@ -28,13 +28,6 @@ namespace Atomix
 			skView.IgnoresSiblingOrder = true;
 
 			GameState.Restore(skView);
-
-//			// Create and configure the scene.
-//
-//			var scene = new IntroScene();
-//
-//			// Present the scene.
-//			skView.PresentScene (scene);
 		}
 
 		public override bool ShouldAutorotate ()

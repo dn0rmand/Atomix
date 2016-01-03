@@ -1,14 +1,18 @@
-﻿<Properties StartupItem="Atomix.csproj">
+﻿<Properties StartupItem="Atomiks.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPadAir.9.2" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="CreditsScene.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Scenes/GameScene.cs">
     <Files>
-      <File FileName="GameScene.cs" Line="200" Column="1" />
-      <File FileName="CreditsScene.cs" Line="40" Column="77" />
-      <File FileName="IntroScene.cs" Line="332" Column="26" />
+      <File FileName="Settings.cs" Line="94" Column="1" />
+      <File FileName="Scenes/GameScene.cs" Line="204" Column="1" />
+      <File FileName="Tools/Music.cs" Line="81" Column="62" />
+      <File FileName="Scenes/CreditsScene.cs" Line="33" Column="16" />
+      <File FileName="GameViewController.cs" Line="25" Column="7" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/dnormand/Projects/BetterCodes/Atomix/MenuScene.cs" line="35" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

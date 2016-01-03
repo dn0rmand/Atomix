@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>Atomix</string>
+	<string>Atomiks</string>
 	<key>CFBundleIdentifier</key>
-	<string>us.normand.atomix</string>
+	<string>us.normand.atomiks</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>

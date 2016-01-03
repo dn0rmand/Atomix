@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Foundation;
 using AVFoundation;
 
@@ -8,20 +9,19 @@ namespace Atomix
 	{
 		static Music()
 		{
-			Settings.Instance.SoundEnabledChanged += (sender, e) => 
+			Settings.Instance.SoundEnabledChanged += async (sender, e) => 
 			{
 				if (Settings.Instance.SoundEnabled)
 					Start();
 				else
 				{
-					Stop(() => {
-						if (_backgroundMusic != null)
-						{
-							_backgroundMusic.Stop();
-							_backgroundMusic.Dispose();
-							_backgroundMusic = null;
-						}
-					});
+					await Stop();
+					if (_backgroundMusic != null)
+					{
+						_backgroundMusic.Stop();
+						_backgroundMusic.Dispose();
+						_backgroundMusic = null;
+					}
 				}
 			};
 		}
@@ -31,7 +31,7 @@ namespace Atomix
 
 		const float MaxVolume = 0.5f;
 
-		static void FadeTo(float volume, double duration, Action completed = null)
+		static async Task FadeTo(float volume, double duration)
 		{
 			var startVolume  = _backgroundMusic.Volume;
 			var targetVolume = volume;
@@ -39,8 +39,6 @@ namespace Atomix
 
 			if (_backgroundMusic == null || _backgroundMusic.Volume == targetVolume) // Already there.
 			{
-				if (completed != null)
-					completed();
 				return;
 			}
 
@@ -49,6 +47,8 @@ namespace Atomix
 				_fadder.Invalidate();
 				_fadder.Dispose();
 			}
+
+			var ts = new TaskCompletionSource<bool>();
 
 			_fadder = NSTimer.CreateRepeatingScheduledTimer(1.0 / 60.0, (t) =>
 			{
@@ -61,23 +61,24 @@ namespace Atomix
 				    (delta < 0 && _backgroundMusic.Volume <= targetVolume))
 				{
 					_backgroundMusic.Volume = targetVolume;
-					if (completed != null)
-						completed();
 					_fadder.Invalidate();
 					_fadder.Dispose();
 					_fadder = null;
+					ts.SetResult(true);
 				}
 			});
+
+			await ts.Task;
 		}
 
-		public static void Start()
+		public static async Task Start()
 		{
 			if (! Settings.Instance.SoundEnabled)
 				return;
 
 			if (_backgroundMusic == null)
 			{
-				var path = NSBundle.MainBundle.PathForResource("Sounds/title.mp3", string.Empty);
+				var path = NSBundle.MainBundle.PathForResource(_musicName, string.Empty);
 				var url  = new NSUrl(path, false);
 
 				_backgroundMusic = AVAudioPlayer.FromUrl(url);
@@ -93,25 +94,40 @@ namespace Atomix
 			{
 				if (! _backgroundMusic.Playing)
 					_backgroundMusic.Play();
-				FadeTo(MaxVolume, 1, null);
+				await FadeTo(MaxVolume, 1);
 			}
 		}
 
-		public static void Stop(Action completed = null)
+		public static async Task Stop()
 		{
 			if (_backgroundMusic != null && _backgroundMusic.Playing)
 			{
-				FadeTo(0.0f, 1, () =>
-				{
-					if (_backgroundMusic != null)
-						_backgroundMusic.Pause();
-
-					if (completed != null)
-						completed();
-				});
+				await FadeTo(0.0f, 1);
+				if (_backgroundMusic != null)
+					_backgroundMusic.Pause();
 			}
-			else if (completed != null)
-				completed();				
+		}
+
+		static string _musicName = "Sounds/title.mp3";
+
+		public static async Task<string> SetMusicName(string name)
+		{
+			var oldName = _musicName;
+
+			if (_musicName != name)
+			{
+				await Stop();
+				if (_backgroundMusic != null)
+				{
+					_backgroundMusic.Dispose();
+					_backgroundMusic = null;
+				}
+
+				_musicName = name;
+				await Start();
+			}
+
+			return oldName;
 		}
 	}
 }
