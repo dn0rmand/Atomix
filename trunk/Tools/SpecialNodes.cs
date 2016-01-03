@@ -8,6 +8,71 @@ using CoreGraphics;
 
 namespace Atomix
 {
+	public class SKGestureScene : SKScene
+	{
+		public SKGestureScene() : base(Constants.GameSize)
+		{
+			this.ScaleMode = SKSceneScaleMode.AspectFit;
+			this.BackgroundColor = UIColor.FromRGB(0xC3, 0xC3, 0xE3);
+		}
+
+		public SKGestureScene(IntPtr handle) : base (handle)
+		{
+		}
+
+		public override void DidMoveToView (SKView view)
+		{
+			base.DidMoveToView (view);
+			this.CreateImage("InfoScreen").ZPosition = Constants.FrameZIndex;
+
+			if (view.GestureRecognizers != null)
+			{
+				// Disable all the old Gestures
+				foreach(UIGestureRecognizer gesture in view.GestureRecognizers)
+				{
+					gesture.Enabled = false;
+				}
+			}
+		}
+
+		public override void WillMoveFromView (SKView view)
+		{			
+			if (view.GestureRecognizers != null)
+			{
+				// Remove all the Disabled Gestures
+				foreach(UIGestureRecognizer gesture in view.GestureRecognizers)
+				{
+					if (!gesture.Enabled)
+					{
+						view.RemoveGestureRecognizer(gesture);
+						gesture.Dispose();
+					}
+				}
+			}
+
+			base.WillMoveFromView (view);
+		}
+
+		protected void GotoScene(SKScene newScene)
+		{
+			var transition = SKTransition.CrossFadeWithDuration(0.5);
+			this.View.PresentScene(newScene, transition);
+		}
+
+		protected SKSpriteNode CreateImage(string name)
+		{
+			var image = SKSpriteNode.FromImageNamed(name);
+
+			image.Position = new CGPoint(Constants.GameWidth/2, Constants.GameHeight/2);
+			image.AnchorPoint = new CGPoint(0.5, 0.5); //.Empty;
+			image.ZPosition = Constants.IntroImageZIndex;
+
+			this.Add(image);
+
+			return image;
+		}
+	}
+	 
 	public class SKWallNode : SKSpriteNode
 	{
 		public SKWallNode(IntPtr handle) : base(handle)

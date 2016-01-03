@@ -7,12 +7,10 @@ using UIKit;
 
 namespace Atomix
 {
-	public class CreditsScene : SKScene
+	public class CreditsScene : SKGestureScene
 	{
-		public CreditsScene() : base(Constants.GameSize)
+		public CreditsScene()
 		{
-			this.ScaleMode = SKSceneScaleMode.AspectFit;
-			this.BackgroundColor = UIColor.FromRGB(0xC3, 0xC3, 0xE3);
 		}
 
 		public CreditsScene (IntPtr handle) : base (handle)
@@ -21,17 +19,11 @@ namespace Atomix
 
 		public override void DidMoveToView(SKView view)
 		{
-			var background = SKSpriteNode.FromImageNamed("InfoScreen");
-			background.Position 	= CGPoint.Empty;
-			background.AnchorPoint 	= CGPoint.Empty;
-			background.ZPosition 	= Constants.FrameZIndex;
-			this.Add(background);
+			base.DidMoveToView(view);
 
-			var credits = SKSpriteNode.FromImageNamed("Credits"); 
+			var credits = this.CreateImage("Credits"); 
 			credits.Position 	= new CGPoint(0, this.Size.Height);
 			credits.AnchorPoint	= new CGPoint(0, 1);
-			credits.ZPosition	= Constants.IntroImageZIndex;
-			this.Add(credits);
 
 			var tapGesture = new UITapGestureRecognizer(HandleTap);
 			view.AddGestureRecognizer(tapGesture);
@@ -43,6 +35,7 @@ namespace Atomix
 			var actions = SKAction.Sequence(delay, scrollUp, delay, scrollDown);
 
 			Action reRun = null;
+
 			reRun = () => { credits.RunAction(actions, reRun); };
 
 			reRun();
@@ -50,9 +43,7 @@ namespace Atomix
 
 		void HandleTap(UITapGestureRecognizer sender)
 		{
-			var transition = SKTransition.CrossFadeWithDuration(0.5);
-			var intro = new IntroScene();
-			this.View.PresentScene(intro, transition);
+			this.GotoScene(new MenuScene());
 		}
 	}
 }

@@ -27,11 +27,14 @@ namespace Atomix
 			/* Sprite Kit applies additional optimizations to improve rendering performance */
 			skView.IgnoresSiblingOrder = true;
 
-			// Create and configure the scene.
-			var scene = new IntroScene();
+			GameState.Restore(skView);
 
-			// Present the scene.
-			skView.PresentScene (scene);
+//			// Create and configure the scene.
+//
+//			var scene = new IntroScene();
+//
+//			// Present the scene.
+//			skView.PresentScene (scene);
 		}
 
 		public override bool ShouldAutorotate ()

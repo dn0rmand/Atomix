@@ -2,9 +2,125 @@
 using System.IO;
 using System.Collections.Generic;
 using Foundation;
+using CoreGraphics;
+using SpriteKit;
+using System.Globalization;
 
 namespace Atomix
 {
+	public class GameState : NSObject
+	{
+		const string LevelNumberKey 	= "LevelNumber";
+		const string ScoreKey			= "ScoreKey";
+		const string RemainingTimeKey 	= "RemainingTime";
+		const string AtomPositionsKey	= "AtomPositions";
+
+		static string	_path = null;
+
+		int				_levelNumber;
+		int				_score;
+		int				_remainingTime;
+		NSDictionary	_atoms;
+
+		public int 				LevelNumber		{ get { return _levelNumber; } }
+		public int 				Score			{ get { return _score; } }
+		public int 				RemainingTime	{ get { return _remainingTime; } }
+		public NSDictionary		Atoms			{ get { return _atoms; } }
+
+		static string Path
+		{
+			get
+			{
+				if (_path == null)
+				{
+					var path = NSSearchPath.GetDirectories(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomain.User)[0];
+
+					_path = (string) ((NSString)path).AppendPathComponent((NSString)"game.state");
+				}
+				return _path;
+			}
+		}
+
+		[Export("initWithCoder:")]
+		public GameState(NSCoder coder)
+		{
+			_levelNumber 	= coder.DecodeInt(LevelNumberKey);
+			_score 			= coder.DecodeInt(ScoreKey);
+			_remainingTime 	= coder.DecodeInt(RemainingTimeKey);
+			_atoms			= coder.DecodeObject(AtomPositionsKey) as NSDictionary;
+		}
+
+		[Export("encodeWithCoder:")]
+		public void EncodeTo(NSCoder coder)
+		{
+			coder.Encode(_levelNumber, LevelNumberKey);
+			coder.Encode(_score, ScoreKey);
+			coder.Encode(_remainingTime, RemainingTimeKey);
+			coder.Encode(_atoms, AtomPositionsKey);
+		}
+
+		GameState(GameScene game)
+		{
+			_score = game.Score;
+			_remainingTime = game.RemainingTime;
+			_levelNumber = game.Level.LevelNumber;
+
+			var atoms = new NSMutableDictionary();
+
+			foreach(SKSpriteNode node in game.Level.Obstables)
+			{
+				var atom = node as SKAtomNode;
+				if (atom != null)
+				{
+					string pos = string.Format(CultureInfo.InvariantCulture, "{0},{1}", atom.Position.X, atom.Position.Y); 
+					atoms.Add(new NSString(atom.Name), new NSString(pos));
+				}
+			}
+
+			_atoms = atoms;
+		}
+
+		public static void Save(GameScene game)
+		{
+			var path = Path;
+			if (game != null && game.Status == Status.Running)
+			{
+				var state = new GameState(game);
+				var data = NSKeyedArchiver.ArchivedDataWithRootObject(state);
+				data.Save(path, true);
+			}
+			else if (File.Exists(path))
+				File.Delete(path);
+		}
+
+		public static void Restore(SKView view)
+		{
+			var path = Path;
+
+			if (File.Exists(path))
+			{
+				var data = NSData.FromFile(path);
+				var state = NSKeyedUnarchiver.UnarchiveObject(data) as GameState;
+
+				Settings.Instance.CurrentLevel = state._levelNumber;
+
+				var scene = new GameScene();
+
+				EventHandler handler = null;
+
+				handler = (sender, e) => {
+					scene.DidStart -= handler;
+					scene.Restore(state);
+				};
+
+				scene.DidStart += handler;
+				view.PresentScene(scene);
+			}
+			else
+				view.PresentScene(new IntroScene());
+		}
+	}
+
 	public class Settings : NSObject
 	{
 		const string	SoundEnabledKey = "SoundEnabled";

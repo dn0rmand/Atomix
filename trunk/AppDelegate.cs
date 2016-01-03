@@ -24,6 +24,7 @@ namespace Atomix
 		public override void OnActivated (UIApplication application)
 		{
 			Music.Start();
+
 			var game = CurrentGame;
 
 			if (game != null && game.View != null)
@@ -38,6 +39,8 @@ namespace Atomix
 		public override void OnResignActivation (UIApplication application)
 		{
 			var game = CurrentGame;
+
+			GameState.Save(game); // Save State in case we crash/get killed
 
 			if (game != null && game.View != null)
 			{

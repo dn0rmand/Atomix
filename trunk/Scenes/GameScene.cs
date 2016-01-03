@@ -4,12 +4,13 @@ using CoreGraphics;
 using Foundation;
 using SpriteKit;
 using UIKit;
+using System.Globalization;
 
 namespace Atomix
 {
 	using CountDownSource = TaskCompletionSource<bool>;
 
-	enum GameState
+	public enum Status
 	{
 		Undefined,
 		Starting,
@@ -36,7 +37,7 @@ namespace Atomix
 		CountDownSource	_countDown = null;
 		double 			_nextTick;
 		bool			_firstRun = true;
-		GameState		_status = GameState.Undefined;
+		Status			_status = Status.Undefined;
 
 		TextNode		_hiScoreNodes = null;
 		TextNode		_scoreNodes = null;
@@ -44,6 +45,8 @@ namespace Atomix
 		TextNode		_timeNodes = null;
 		SKButton		_pauseButton = null;
 		SKNode			_pausedScreen = null;
+
+		public event EventHandler DidStart;
 
 		public GameScene() : base(Constants.GameSize)
 		{
@@ -59,6 +62,19 @@ namespace Atomix
 
 		public override void DidMoveToView (SKView view)
 		{			
+			base.DidMoveToView(view);
+
+			// Disable all old gestures
+
+			if (view.GestureRecognizers != null)
+			{
+				// Disable all the old Gestures
+				foreach(UIGestureRecognizer gesture in view.GestureRecognizers)
+				{
+					gesture.Enabled = false;
+				}
+			}
+
 			// Add Pause Button
 
 			_pauseButton = SKButton.Create("Pause");
@@ -165,7 +181,7 @@ namespace Atomix
 
 			// Start Game
 
-			_status = GameState.Starting;
+			_status = Status.Starting;
 
 			// Allow user to move Atoms
 
@@ -188,14 +204,14 @@ namespace Atomix
 			}
 			else
 			{
-				GotoIntroScene();
+				GotoMenuScene();
 			}
 		}
 
-		void GotoIntroScene()
+		void GotoMenuScene()
 		{
 			var transition = SKTransition.CrossFadeWithDuration(0.5);
-			var intro = new IntroScene();
+			var intro = new MenuScene();
 			this.View.PresentScene(intro, transition);
 		}
 
@@ -237,7 +253,7 @@ namespace Atomix
 
 				exitButton.Clicked += (sender, e) => 
 				{
-					GotoIntroScene();
+					GotoMenuScene();
 				};
 			}
 
@@ -252,7 +268,7 @@ namespace Atomix
 			if (_pauseButton != null)
 				_pauseButton.Hidden  = true;		
 
-			_status = GameState.Finished;
+			_status = Status.Finished;
 
 			SKAtomNode.Lock(); // No more moving atoms
 
@@ -282,7 +298,7 @@ namespace Atomix
 				exitButton.Destroy();
 				retryButton.Destroy();
 
-				GotoIntroScene();
+				GotoMenuScene();
 			};
 
 			retryButton.Clicked += (sender, e) => 
@@ -300,10 +316,15 @@ namespace Atomix
 			};
 		}
 
+		public int 		RemainingTime 	{ get { return _time; } }
+		public int 		Score		 	{ get { return _score; } }
+		public Level	Level		  	{ get { return _level; } }
+		public Status	Status			{ get { return _status; } }
+
 		public async Task Success()
 		{
 			// Set Status as Success
-			_status = GameState.Success;
+			_status = Status.Success;
 
 			SKAtomNode.Lock();
 
@@ -313,9 +334,9 @@ namespace Atomix
 
 			_countDown = new CountDownSource();
 
-			_status = GameState.StartCountDown;
+			_status = Status.StartCountDown;
 			await _countDown.Task;
-			_status = GameState.Finished;
+			_status = Status.Finished;
 
 			// Set Level as Completed and save it's Score ( if higher )
 			Settings.Instance.SetLevelCompleted(_level.LevelNumber, _score);
@@ -343,7 +364,7 @@ namespace Atomix
 			}
 			set 
 			{
-				if (base.Paused != value && (_status == GameState.Running || _status == GameState.CountingDown))
+				if (base.Paused != value && (_status == Status.Running || _status == Status.CountingDown))
 				{
 					var currentTime = NSDate.Now.SecondsSinceReferenceDate;
 					if (value) 
@@ -369,14 +390,14 @@ namespace Atomix
 			currentTime = NSDate.Now.SecondsSinceReferenceDate; // Use my own currentTime
 			switch (_status)
 			{
-				case GameState.Starting:
+				case Status.Starting:
 					_nextTick = currentTime+1;
-					_status = GameState.Running;
-					//if (! _firstRun) // Switched to new Level, Pause						
-					//	Paused = true;
+					_status = Status.Running;
+					if (DidStart != null)
+						DidStart(this, EventArgs.Empty);
 					break;
 
-				case GameState.Running:
+				case Status.Running:
 					_firstRun = false;
 					if (_time == 0)
 					{
@@ -390,15 +411,15 @@ namespace Atomix
 					}
 					break;
 
-				case GameState.Finished:
+				case Status.Finished:
 					break;
 
-				case GameState.StartCountDown:
+				case Status.StartCountDown:
 					_nextTick = currentTime;
-					_status = GameState.CountingDown;
+					_status = Status.CountingDown;
 					break;
 
-				case GameState.CountingDown:
+				case Status.CountingDown:
 					if (_time > 0)
 					{
 						int points = 0;
@@ -414,10 +435,32 @@ namespace Atomix
 					}
 					else
 					{
-						_status = GameState.Finished;
+						_status = Status.Finished;
 						_countDown.SetResult(true);
 					}				
 					break;
+			}
+		}
+
+		public void Restore(GameState state)
+		{
+			if (_level == null || _level.LevelNumber != state.LevelNumber)
+				CreateLevel(state.LevelNumber);
+
+			_time  = state.RemainingTime;
+			_score = state.Score;
+
+			var keys = state.Atoms.Keys;
+
+			foreach(NSString key in keys)
+			{
+				string[] points = ((string)(state.Atoms.ObjectForKey(key) as NSString)).Split(',');
+				var x = nfloat.Parse(points[0], CultureInfo.InvariantCulture);
+				var y = nfloat.Parse(points[1], CultureInfo.InvariantCulture);
+
+				SKAtomNode atom = _level.GetChildNode(key) as SKAtomNode;
+				if (atom != null)
+					atom.Position = new CGPoint(x,y);
 			}
 		}
 	}

@@ -132,6 +132,8 @@ namespace Atomix
 
 		void LoadPlayField(DataReader reader)
 		{
+			int atomIdx = 0;
+
 			for (int y = 0 ; y < 16 ; y++)
 			{
 				for (int x = 0 ; x < 16 ; x++)
@@ -148,6 +150,8 @@ namespace Atomix
 					{
 						var free = new SKFreeNode();
 						var atom = SKAtomNode.Create(value);
+
+						atom.Name = string.Format("ATOM-{0}", atomIdx++);
 
 						AddNode(free, x, y);
 						AddNode(atom, x, y);

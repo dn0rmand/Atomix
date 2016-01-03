@@ -7,7 +7,7 @@ using UIKit;
 
 namespace Atomix
 {
-	partial class Level : SKNode
+	public partial class Level : SKNode
 	{
 		static SKAction _explosionSound = SKAction.PlaySoundFileNamed("Sounds/explode.mp3", false);
 
